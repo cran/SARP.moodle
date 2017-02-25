@@ -59,17 +59,18 @@ afficher_nombre.moodle( x,
   utilisé pour les messages d'erreur. Les valeurs manquantes (\code{NA})
   ou non-numériques (\code{NaN}) sont affichées avec ces caractères, et
   le style des messages d'erreur. Les valeurs infinies (\code{Inf} et
-  \code{-Inf}) sont affichées avec le symbole infini (entité
-  \code{&infin;}). Les chaînes de caractère sont affichées
+  \code{-Inf}) sont affichées avec le symbole \eqn{\infty}{infini}
+  (entité \code{&infin;}). Les chaînes de caractère sont affichées
   inchangées. Enfin, les nombres sont mis en forme avec le symbole
   \code{dec} comme séparateur décimal, un signe moins correct (entité
   \code{&minus;}) et, si nécessaire, une puissance de 10 correcte (soit
-  \code{&thinsp;&times;&thinsp;10<sup>n</sup>}, où n est la puissance,
-  pour avoir ×10^n avec des espacements corrects).}
+  \code{&thinsp;&times;&thinsp;10<sup>n</sup>}, où \eqn{n} est la
+  puissance, pour avoir \eqn{\times 10^n}{×10^n} avec des espacements
+  corrects).}
 
-\value{Ces fonctions renvoie une unique chaîne de caractères, au format
-  HTML, qui peut être utilisée pour construire le texte d'un énoncé,
-  d'une réponse affichée, d'un commentaire...  }
+\value{Ces fonctions renvoient une unique chaîne de caractères, au
+  format HTML, qui peut être utilisée pour construire le texte d'un
+  énoncé, d'une réponse affichée, d'un commentaire...  }
 
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}

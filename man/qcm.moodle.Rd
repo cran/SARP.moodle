@@ -40,11 +40,12 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
   \code{Fausses} (pour les mauvaises réponses) ; s'ils sont indiqués, ce
   doivent être des vecteurs numériques ayant le même nombre d'éléments
   que la liste des réponses.  Par défaut (si l'élément vaut
-  \code{NULL}), chaque bonne réponse est affecté de la même fraction de
+  \code{NULL}), chaque bonne réponse est affectée de la même fraction de
   note, de sorte que l'on atteigne 100 \% en cochant toutes les bonnes
   réponses. De la même façon, les mauvaises réponses sont affectées
   d'une fraction négative de sorte que cocher toutes les mauvaises
-  réponses.
+  réponses annule le fait de cocher toutes les bonnes réponses, sans
+  donner une note négative.
 
   Les fractions doivent être comprises entre 0 (exclus) et 100 pour les
   bonnes réponses ; elles doivent être négatives pour les mauvaises

@@ -27,7 +27,7 @@ question_libre.moodle( texte.intro, textes.avant, texte.final,
   \emph{précédé} du texte contenu dans cette chaîne de caractères. Ces
   textes peuvent contenir n'importe quel caractère (codage en UTF-8) et
   n'importe quelles balises HTML. Le nombre d'éléments du vecteur
-  doit être égal au nombre d'éléments de \code{reponse}. }
+  doit être égal au nombre d'éléments de \code{reponses}. }
 
   \item{texte.final}{ Le texte qui doit se placer après le dernier champ
   de réponse de la question. Il peut contenir n'importe quel caractère (codage en UTF-8) et

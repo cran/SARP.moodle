@@ -6,7 +6,7 @@
 }
 \description{
   Cette fonction permet de créer une question dont la réponse est une
-  valeur numérique unique
+  valeur numérique unique.
 }
 \usage{
 numerique.moodle( texte, bonne.reponse, etendue = NULL,

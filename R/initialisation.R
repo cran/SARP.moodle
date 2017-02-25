@@ -7,6 +7,9 @@
 ## Historique
 ##   31 octobre 2016 : préparé pour la création de glossaires
 ##                     enjolivé les commentaires
+##
+##   19 février 2017 : change l'encodage de utf8 en UTF-8
+##                     [sinon, erreur quand test CRAN sur Solaris…]
 ## ─────────────────────────────────────────────────────────────────
 
 # L'environnement local
@@ -71,7 +74,9 @@ debuter_xml.moodle <- function( fichier.xml,   # Le nom du fichier XML à créer
     }
 
     ## On ouvre le fichier XML --- codage en utf8 selon la doc Moodle
-    f <- file( fichier.xml, 'w', encoding = "utf8" )
+    ##   (Attention, dans R « utf8 » non-portable
+    ##    => utiliser « UTF-8 »)
+    f <- file( fichier.xml, 'w', encoding = "UTF-8" )
     attr( f, "glossaire" ) <- glossaire
     assign( "fichier.xml", f, envir = SARP.Moodle.env )
 

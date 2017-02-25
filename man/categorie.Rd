@@ -16,7 +16,7 @@ categorie.moodle( nom.categorie, autoriser.dollar = FALSE,
   \item{nom.categorie}{ Le nom de la catégorie. Il est possible de
     donner une hiérarchie de
     catégories, en utilisant la barre oblique  (\code{/}) comme séparateur des
-    différents niveaux - comme dans un chemin incluant des dossiers.}
+    différents niveaux --- comme dans un chemin incluant des dossiers.}
 
   \item{autoriser.dollar}{Le dollar (\code{$}) est un caractère réservé,
   qui permet d'ancrer les catégories dans les divers cours. Pour éviter
@@ -72,5 +72,5 @@ finir_xml.moodle( )
 # Importez le fichier exemple.categorie.xml dans Moodle pour voir le résultat...
 print( "Importez le fichier exemple.categorie.xml dans Moodle pour voir le résultat..." )
 }
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+%% \keyword{ ~kwd1 }
+%% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

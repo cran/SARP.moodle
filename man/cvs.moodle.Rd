@@ -64,7 +64,7 @@ csv.moodle(fichier.csv,
     Le nom ou le numéro de la colonne qui contient le code de la
     question. Cette colonne n'est obligatoire que pour créer des
     questions « cloze ». Si elle est manquante, un code interne de la
-    forme \code{[Qnn]} où \code{nn} est le numéro de la question, est
+    forme \code{[Qnn]}, où \code{nn} est le numéro de la question, est
     construit, chaque question correspondant à une ligne avec les deux
     colonnes \code{colonne.texte} et \code{colonne.reponse}
     renseignées. Voyez les détails pour davantage de précisions.
@@ -165,7 +165,7 @@ csv.moodle(fichier.csv,
   appel à \code{\link{qroc.moodle}}.
 
   S'il y a un énoncé, mais pas de réponse, cet énoncé est supposé être
-  une indication de catégorie (sauf si la question à le même code qu'une
+  une indication de catégorie (sauf si la question a le même code qu'une
   question « cloze », voir plus loin) qui sera créée comme une
   sous-catégorie de la catégorie de base, par un appel à
   \code{\link{categorie.moodle}}.
@@ -196,12 +196,10 @@ csv.moodle(fichier.csv,
   même principe que la fonction \code{\link{question_libre.moodle}}:
   après chaque partie d'énoncé, un champ de réponse est créé, dont la
   bonne réponse est celle indiquée dans la colonne
-  \preformatted{colonne.reponse} et sert à définir le type de champ de
-  réponse (selon la logique des questions en une ligne).  Pour avoir un
-  texte après le dernier champ de réponse, laissez la colonne
-  \preformatted{colonne.reponse} tout en gardant le même code de
-  question.
-
+  \code{colonne.reponse} et sert à définir le type de champ de réponse
+  (selon la logique des questions en une ligne).  Pour avoir un texte
+  après le dernier champ de réponse, laissez la colonne
+  \code{colonne.reponse} tout en gardant le même code de question.
 }
 \section{Attention!}{
     Moodle est assez peu permissif pour les notes

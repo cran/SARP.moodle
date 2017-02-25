@@ -1,8 +1,8 @@
 Package: SARP.moodle
 Type: Package
 Title: XML Output Functions for Easy Creation of Moodle Questions
-Version: 0.3.6
-Date: 2017-02-09
+Version: 0.3.7
+Date: 2017-02-19
 Authors@R: person( "Emmanuel", "Curis",
                    email = "emmanuel.curis@parisdescartes.fr",
  		   role  = c( "aut", "cre" ) )
@@ -15,8 +15,9 @@ Suggests:
 Depends:
 Imports: stats,utils
 Encoding: UTF-8
+Language: fr
 NeedsCompilation: no
-Packaged: 2017-02-19 06:00:17 UTC; curis
+Packaged: 2017-02-25 17:44:49 UTC; curis
 Author: Emmanuel Curis [aut, cre]
 Repository: CRAN
-Date/Publication: 2017-02-19 10:53:30
+Date/Publication: 2017-02-25 23:59:07

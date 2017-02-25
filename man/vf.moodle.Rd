@@ -32,8 +32,8 @@ vrai_faux.moodle( texte,  texte.vrai = "Vrai", texte.faux = "Faux",
 
   \item{ordre}{ L'ordre dans lequel les deux réponses possibles doivent
     apparaître. Les trois premières possibilités décident d'un ordre
-    aléatoire (fixe). Cette option n'a d'intérêt que si \code{melanger =
-    FALSE}...}
+    aléatoire (fixe). Cette option n'a d'intérêt que si
+    \code{melanger=FALSE}...}
 
   \item{melanger}{ Si \code{TRUE}, indique que Moodle devra tirer au
     sort l'ordre d'affichage des réponses (qui changera donc à chaque fois

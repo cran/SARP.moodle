@@ -1,7 +1,7 @@
 \name{definir_dossier.image.moodle}
 \alias{definir_dossier.image.moodle}
 \alias{lier_image.moodle}
-\alias{image.moodle}
+%\alias{image.moodle}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
   Insérer une image dans une question
@@ -69,9 +69,7 @@ lier_image.moodle( nom.image, largeur = -1, hauteur = -1,
     base Moodle.
 
     \item Mémorisez cette URL et utilisez-la comme base:
-    \code{lier_image.moodle(
-      "https://votre.site.moodle/pluginfile.php/0000/mod_folder/content/0/"
-      ) }
+    \preformatted{lier_image.moodle("https://votre.site.moodle/pluginfile.php/0000/mod_folder/content/0/" ) }
     }
 
     Toutes les images situées dans ce dossier (au moment de l'import
@@ -113,5 +111,5 @@ finir_xml.moodle( )
 # Importez le fichier exemple.image.xml dans Moodle pour voir le résultat...
 print( "Importez le fichier exemple.image.xml dans Moodle pour voir le résultat..." )
 }
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+%% \keyword{ ~kwd1 }
+%% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

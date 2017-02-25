@@ -9,8 +9,8 @@
 }
 \usage{
 csv_glossaire.moodle( fichier.csv,
-                      colonne.terme = 'Mot',
-                      colonne.definition = 'D\u00e9finition',
+                      colonne.terme = "Mot",
+                      colonne.definition = "D\u00e9finition",
                       fichier.xml = if ( TRUE == nv.fichier ) gsub(
                             "\\\\.[Cc][Ss][Vv]$",
                             ".xml", fichier.csv )
@@ -18,7 +18,7 @@ csv_glossaire.moodle( fichier.csv,
                                               envir = SARP.Moodle.env ),
                       nv.fichier = TRUE,
                       embellir = TRUE, deja.HTML = FALSE,
-                      sep = ";", header = TRUE, quote = '\"',
+                      sep = ";", header = TRUE, quote = "\"",
                       ... )
 }
 \arguments{

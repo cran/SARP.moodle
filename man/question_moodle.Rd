@@ -24,17 +24,17 @@ question.moodle( type = "cloze",
     balise \code{<question>}). Vecteur contenant une seule chaîne de
     caractères.}
 
-  \item{titre}{ L'intitulé de la question, en HTML. Il correspond à l'élément entre les
-    balises \code{<name>} et \code{</name>} de la question. Indiquer
-    \code{NULL} pour ne pas donner de titre. }
+  \item{titre}{ L'intitulé de la question, en HTML. Il correspond à
+    l'élément entre les balises \code{<name>} et \code{</name>} de la
+    question. Indiquez \code{NULL} pour ne pas donner de titre. }
 
   \item{reponses}{ Un vecteur. Chaque élément correspond à une réponse
     possible, c'est-à-dire à un champ délimité par les balises
     \code{<answer>} et \code{</answer>}. \emph{Attention}, les valeurs
     de de ce vecteur sont indiquées telles qu'elles dans le fichier XML,
-    dans être protégées : n'utilisez des formats particuliers qu'avec
+    sans être protégées : n'utilisez des formats particuliers qu'avec
     précaution, ou en les protégeant manuellement par une balise
-    \code{<![CDATA[...]} --- ce que font les fonctions de création de
+    \code{<![CDATA[...]]>} --- ce que font les fonctions de création de
     question prédéfinies, si nécessaire.
 
     Pour indiquer des commentaires (champs \code{<feedback>}), créez un
@@ -44,11 +44,10 @@ question.moodle( type = "cloze",
     vide.
 
     Par défaut, la première réponse est considérée comme parfaitement
-    correct (100 \% de la note) et toutes les autres comme fausses (0
-    \%). Pour indiquer des fractions pour chaque note, créez un vecteur
+    correcte (100\% de la note) et toutes les autres comme fausses (0\%).
+    Pour indiquer des fractions pour chaque note, créez un vecteur
     numérique de même longueur que le nombre de réponses et associez-le
-    aux réponses comme attribut, de nom \code{fractions}.
-  }
+    aux réponses comme attribut, de nom \code{fractions}.  }
 
   \item{commentaire.global}{ Un vecteur de chaînes de caractère, de
     longueur 1, correspondant au retour à indiquer globalement (champ
@@ -68,7 +67,7 @@ question.moodle( type = "cloze",
     pas indiquer de pénalité. }
 
   \item{autres.codes}{ Un vecteur de chaînes de caractère, correspondant
-    aux valeurs à donner à des champs optionnels des questions. Ils sont
+    aux valeurs à donner à des champs optionnels de la question. Ils sont
     écrits dans l'ordre. Le nom des champs est déterminé à partir du nom
     des éléments du vecteur. }
 
@@ -78,7 +77,7 @@ question.moodle( type = "cloze",
 
 \details{ Cette fonction est la fonction principale, appelée par toutes
   les autres fonctions de création d'une question Moodle. Les autres
-  fonctions étant d'usage plus smple, n'utilisez cette fonction que pour
+  fonctions étant d'usage plus simple, n'utilisez cette fonction que pour
   des cas non-prévus par les fonctions spécialisées.
 }
 

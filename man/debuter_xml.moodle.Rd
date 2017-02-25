@@ -2,7 +2,7 @@
 \alias{debuter_xml.moodle}
 \alias{finir_xml.moodle}
 \title{
-  Commencer et terminer la génération de questionnaire Moodle
+  Commencer et terminer un questionnaire Moodle
 }
 \description{
   Ces deux fonctions permettent de commencer et de terminer la
@@ -27,9 +27,8 @@ finir_xml.moodle(fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ))
     questionnaire à terminer (par défaut, le dernier créé).
   }
   \item{dec}{
-    Le séparateur décimal à utiliser dans les textes
-    The symbol to be used as decimal separator (defaults to the comma,
-    as used in French for instance). (set through \code{options}).
+    Le séparateur décimal à utiliser dans les textes. Par défaut, la
+    virgule (comme utilisé en français). Il est modifié par \code{options}.
   }
   \item{n.chiffres}{
     Le nombre de décimales à utiliser pour les sorties au format
@@ -58,7 +57,7 @@ finir_xml.moodle(fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ))
 }
 \value{ La fonction \code{debuter_xml.moodle} renvoie un descripteur de
   fichier correspondant au questionnaire nouvellement créé. Ce
-  descripteur peut être utiliser par toutes les fonctions de la
+  descripteur peut être utilisé par toutes les fonctions de la
   bibliothèque, mais aussi par la fonction \code{\link{cat}} de R
   directement, si nécessaire.
 
@@ -71,8 +70,9 @@ finir_xml.moodle(fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ))
 %%  ~~further notes~~
 %}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
-%\seealso{
-%}
+\seealso{ \code{\link{options}( OutDec )} pour le choix du séparateur
+  décimal à l'affichage.
+}
 \examples{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple" )
@@ -86,5 +86,5 @@ finir_xml.moodle( )
 # Importez le fichier exemple.xml dans Moodle pour voir le résultat...
 print( "Importez le fichier exemple.xml dans Moodle pour voir le résultat..." )
 }
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+%% \keyword{ ~kwd1 }
+%% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
