@@ -12,6 +12,9 @@
 ##   9 février 2017 : début de l'historique (…)
 ##                    ajouté une option en ligne de commande : mélange des réponses…
 ##                    préparé pour une colonne de type de question (QCM/QCU)
+##
+##   1 avril   2017 : corrigé la sélection de type par la colonne Type / QCU
+##                    (était ignoré avant, voire risque d'erreur « objet inexistant »)
 ## ──────────────────────────────────────────────────────────────────────
 
 ## La seule fonction visible de l'extérieur...
@@ -41,6 +44,7 @@
 ## embellir    : si TRUE, on modifie les textes pour enjoliver la présentation
 ## deja.HTML   : si TRUE, le texte contient du code HTML : ne pas protéger les balises !
 ## forcer.multiple   : si TRUE, les QCM sont à choix multiples même s'il n'y a qu'une seule réponse
+##                      (Sauf si le type de question force à être un QCU)
 ## melanger.reponses : si TRUE, les réponses sont à mélanger par Moodle
 ## categorie.base    : nom de la catégorie de base où stocker les questions
 ## 
@@ -310,7 +314,7 @@ convertir_question <- function( question,
 
     ## Le type de la question, s'il existe
     if ( FALSE == is.na( colonne.type ) ) {
-        type.quesion <- question[ , colonne.type ]
+        type.question <- question[ , colonne.type ]
         
         ## Harmonisation : minuscule, pas d'espace, pas de point
         type.question <- tolower( type.question )
@@ -338,6 +342,9 @@ convertir_question <- function( question,
         }
     } else {
         type.question <- NA
+    }
+    if ( !is.na( type.question ) ) {
+        cat( "  [Type de question impos\u00e9 :", type.question, "]\n" )
     }
 
     ## Combien de réponses à la question
@@ -443,12 +450,22 @@ convertir_question <- function( question,
         mauvaises <- setdiff( 1:n.reponses, bonnes )
 
         ## Y a-t-il une seule bonne réponse, ou plusieurs ?
+        reponse.unique <- FALSE
         if ( FALSE == is.na( type.question ) ) {
-            reponse.unique <- type.question == "qcu"
+            reponse.unique <- ( type.question == "qcu" )
         }
         reponse.unique <- any( length( bonnes )           ==   1, # Oui si une seule réponse avec une note > 0
                                question[ , colonne.note ] == 100, # ou si une réponse apporte 100 % des points
                                na.rm = TRUE )
+        if ( all( !is.na( type.question ),
+                  type.question == "qcu" ) ) {
+            if ( FALSE == reponse.unique ) {
+                stop( "Incoh\u00e9rence : QCU demand\u00e9,",
+                      " mais plusieurs bonnes r\u00e9ponses indiqu\u00e9es !\n",
+                      " Conversion interrompue." )
+            }
+            forcer.multiple <- FALSE;    # On empêche la conversion en multiple...
+        }
 
         ## Et on crée la question...
         qcm.moodle( texte = question[ 1, colonne.texte ],

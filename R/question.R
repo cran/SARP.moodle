@@ -9,6 +9,8 @@
 ##                     avertissement en cas de notes automatiques
 ##
 ##   20 octobre 2016 : commentaire global (après réponse) géré
+##
+##   31 mars    2017 : sortie des notes avec 7 décimales pour garder les fractions…
 ## ─────────────────────────────────────────────────────────────────
 
 question.moodle <- function( type = "cloze",
@@ -78,6 +80,10 @@ question.moodle <- function( type = "cloze",
                 stop( "Discordance entre nombre de r\u00e9ponses et nombre de fractions..." )
             }
         }
+
+        ## On convertit les fractions en textes, en garantissant les chiffres corrects
+        fractions <- format( fractions, decimal.mark = ".", digits = 10, nsmall = 8,
+                             drop0trailing = TRUE, trim = TRUE )
 
         ## A-t-on précisé des commentaires pour chaque réponse ?
         commentaires <- attr( reponses, "commentaire" )

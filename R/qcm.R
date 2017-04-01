@@ -13,6 +13,8 @@
 ##
 ##    9 février 2017 : [Vrai-Faux] si l'ordre des réponses est imposé,
 ##                                 on interdit à Moodle de le choisir aléatoirement
+##
+##    1 avril   2017 : [Vrai-Faux] on désactive la numérotation des réponses
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -49,7 +51,8 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
     ## On crée la question
     ## Rq : on n'utilise pas le format truefalse, car il n'autorise pas de modifier les textes des vrai/faux...
     codes <- c( "single" = "true",     # Une seule réponse possible
-                "shuffleanswers" = if ( TRUE == melanger ) 1 else 0 )
+                "shuffleanswers"  = if ( TRUE == melanger ) 1 else 0,
+                "answernumbering" = "none" )
 
     question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                      titre = titre, texte = texte, reponses = reponses,

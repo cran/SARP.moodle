@@ -10,6 +10,8 @@
 ##
 ##   19 février 2017 : change l'encodage de utf8 en UTF-8
 ##                     [sinon, erreur quand test CRAN sur Solaris…]
+##
+##   31 mars    2017 : en terminant, on remet les options comme elles étaient…
 ## ─────────────────────────────────────────────────────────────────
 
 # L'environnement local
@@ -101,4 +103,8 @@ finir_xml.moodle <- function( fichier.xml = get( "fichier.xml", envir = SARP.Moo
          "\n" )
 
     close( fichier.xml )
+
+    ## On remet les options comme elles étaient
+    vx.options <- get( "vieilles.options", envir = SARP.Moodle.env )
+    options( vx.options )
 }
