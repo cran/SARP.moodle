@@ -1,6 +1,6 @@
 #exportPattern("^[[:alpha:]]+") # Tous les noms alphanumériques
 exportPattern("\\.moodle$") # Les fonctions se terminant par .moodle
 
-## Les fonctions extérieures utilisées…
+## Les fonctions extérieures utilisées...
 importFrom("stats", "na.omit")
 importFrom("utils", "read.table")
