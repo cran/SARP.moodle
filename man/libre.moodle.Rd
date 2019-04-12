@@ -121,17 +121,18 @@ categorie.moodle( "Exemples SARP/Question libre" )
 
 # Une question Moodle libre avec champs numériques
 question_libre.moodle( "Indiquez les chiffres du nombre 1974.",
-                       list( "Unité : ", " — dizaine : ",
-                             " — centaine : ", " — milliers : " ), ".",
+                       list( "Unit&eacute; : ", " &mdash; dizaine : ",
+                             " &mdash; centaine : ", " &mdash; milliers : " ), ".",
                        reponses = list( 4, 7, 9, 1 ) )
 
 # Avec un champ numérique et des champs à choix multiples
 question_libre.moodle( "<cite>Le Corbeau et le Renard</cite>.",
-                       list( "<i>Maître ",
-                             " sur son arbre perché<br />Tenait en son bec un ",
-                             ".<br />Maître ",
-                             "</i>par l'odeur alléché<br />... est un poème composé en " ),
-                       " par le poète Jean de la Fontaine.",
+                       list( "<i>Ma&icirc;tre ",
+                             " sur son arbre perch&eacute;<br />Tenait en son bec un ",
+                             ".<br />Ma&icirc;tre ",
+                             "</i>par l'odeur all&eacute;ch&eacute;<br />...",
+                             " est un po&egrave;me compos&eacute; en " ),
+                       " par le po&egrave;te Jean de la Fontaine.",
                        types = c( "MULTICHOICE", "MULTICHOICE_H",
                                   "SHORTANSWER", "NUMERICAL" ),
                        reponses = list( list( "Textes"  = c( "Renard", "Goupil",
@@ -149,5 +150,5 @@ question_libre.moodle( "<cite>Le Corbeau et le Renard</cite>.",
 finir_xml.moodle( )
 
 # Importez le fichier exemple.libre.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.libre.xml dans Moodle pour voir le résultat..." )
+print( "Importez le fichier exemple.libre.xml dans Moodle pour voir le r\u00e9sultat..." )
 }

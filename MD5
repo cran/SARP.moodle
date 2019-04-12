@@ -1,8 +1,8 @@
-d23d84c9021a236b66f0a6348f15c6da *DESCRIPTION
+6fb1bc028fb0130caacac0eecf120d75 *DESCRIPTION
 d73b792ee4e6e997f1aa272ccab9fccc *NAMESPACE
 2e64b18a0bb3394bf84f8eb8e7784da8 *R/affichages.R
 22b1769d8b18ccb62f8e882b37907762 *R/categories.R
-c8facdbf85d03324cbb02cdd25c2b3e0 *R/conversion_csv.R
+ae962d765ad745503de7ff6d00760f52 *R/conversion_csv.R
 ae93ef9f97f2420b52155ea9d4a3e80a *R/glossaire.R
 d3a0d586996ffa9fb0202be0483c2334 *R/images.R
 e938576a2111bae9c2086b71f271b47b *R/initialisation.R
@@ -17,7 +17,7 @@ a191cb9de3885c361bfd58508046683d *man/affichages.Rd
 1c7669526cb3d6abda4e7287b8f1341f *man/debuter_xml.moodle.Rd
 b19ac36735038287e2061b3aa2f520aa *man/glossaire.Rd
 373bd1c929ee5ffb9c9a599735711115 *man/image.Rd
-6900b891ea018c99bc549a8f0964e483 *man/libre.moodle.Rd
+fa691f04a550a0eb5673b88f359381dc *man/libre.moodle.Rd
 084be4dd104de41771d94e3079761cb6 *man/numerique.moodle.Rd
 19c5603aeb06f9cb54f74d5f86067f11 *man/ouverte.moodle.Rd
 17512372edccb243f032a9d339d4ccec *man/package.Rd
