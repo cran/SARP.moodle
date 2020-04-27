@@ -90,6 +90,7 @@ question.moodle( type = "cloze",
   \code{\link{question_ouverte.moodle}}, \code{\link{vrai_faux.moodle}}
 }
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.question" )
 
@@ -107,5 +108,7 @@ question.moodle( type  = "truefalse", titre = "Question binaire",
 finir_xml.moodle( )
 
 # Importez le fichier exemple.question.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.question.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.question.xml dans Moodle pour voir le résultat..." )
+}
 }

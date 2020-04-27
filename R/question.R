@@ -11,6 +11,9 @@
 ##   20 octobre 2016 : commentaire global (après réponse) géré
 ##
 ##   31 mars    2017 : sortie des notes avec 7 décimales pour garder les fractions…
+##
+##   29 janvier 2020 : codage des textes (énoncés, commentaires)
+##                      => l'inclusion d'images est possible...
 ## ─────────────────────────────────────────────────────────────────
 
 question.moodle <- function( type = "cloze",
@@ -32,17 +35,18 @@ question.moodle <- function( type = "cloze",
 
     ## OBLIGATOIRE : le texte de la question
     cat( file = fichier.xml, sep = "",
-         " <questiontext format=\"html\">\n",
-         "  <text><![CDATA[", texte, "]]></text>\n",
+         " <questiontext format=\"html\">\n" )
+    coder.texte( texte, fichier.xml = fichier.xml )
+    cat( file = fichier.xml, sep = "",
          " </questiontext>\n" )
 
     ## On indique le commentaire général fait à la question
-    if ( all( is.na( commentaire.global ) == FALSE, nchar( commentaire.global ) > 0 ) ) {
+    if ( all( is.na( commentaire.global ) == FALSE,
+              nchar( commentaire.global ) > 0 ) ) {
         cat( file = fichier.xml, sep = "",
-             " <generalfeedback>\n",
-             "  <text><![CDATA[",
-             commentaire.global,
-             "]]></text>\n",
+             " <generalfeedback>\n" )
+        coder.texte( commentaire.global, fichier.xml = fichier.xml )
+        cat( file = fichier.xml, sep = "",
              " </generalfeedback>\n" )
     }
 
@@ -98,17 +102,22 @@ question.moodle <- function( type = "cloze",
         }
 
         ## On ajoute chaque réponse (bonne, partielle ou fausse) au fichier
+        ##   Attention, pas forcément de balise CDATA !
+        ##    => s'il en faut, la fonction appelante doit les mettre
+        ##       on fait le recodage sans en ajouter
         for ( i in 1:n.reponses ) {
             cat( file = fichier.xml, sep = "", "\n",
-                 " <answer fraction=\"", fractions[ i ], "\">\n",
-                 "  <text>", reponses[ i ], "</text>\n" )
+                 " <answer fraction=\"", fractions[ i ], "\">\n" )
+            coder.texte( reponses[ i ], fichier.xml = fichier.xml,
+                         balise.CDATA = FALSE ) 
+#                 "  <text>", reponses[ i ], "</text>\n" )
             if ( all( ( FALSE == is.na( commentaires[ i ] ) ),
                       nchar( commentaires[ i ] ) > 0 ) ) {
               cat( file = fichier.xml, sep = "", "\n",
-                   "  <feedback>\n",
-                   "   <text>\n",
-                   "    <![CDATA[", commentaires[ i ], "]]>\n",
-                   "   </text>\n",
+                   "  <feedback>\n" )
+                   coder.texte( commentaires[ i ], fichier.xml = fichier.xml,
+                                indentation = 3 )
+              cat( file = fichier.xml, sep = "", "\n",
                    "  </feedback>\n" )
             }
             cat( file = fichier.xml, sep = "\n",

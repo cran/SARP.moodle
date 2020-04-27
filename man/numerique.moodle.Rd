@@ -58,14 +58,12 @@ Aucune valeur n'est renvoyée par cette fonction.
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
 }
-%\note{
-%%  ~~further notes~~
-%}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{ \code{\link{qcm.moodle}}, \code{\link{qroc.moodle}},
 \code{\link{question_ouverte.moodle}}, \code{\link{vrai_faux.moodle}} }
+
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.numerique" )
 
@@ -79,5 +77,7 @@ numerique.moodle( "Donnez la valeur de &pi;", pi, n.decimales = 3 )
 finir_xml.moodle( )
 
 # Importez le fichier exemple.numerique.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.numerique.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.numerique.xml dans Moodle pour voir le résultat..." )
+}
 }

@@ -42,9 +42,6 @@ Aucune valeur n'est renvoyée par cette fonction.
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
 }
-%\note{
-%%  ~~further notes~~
-%}
 
 \section{Attention}{Les catégories ne seront prises en compte que si
   l'option correspondante est cochée lors de l'import du fichier (case «
@@ -53,6 +50,7 @@ Aucune valeur n'est renvoyée par cette fonction.
 %\seealso{
 %}
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.categorie" )
 
@@ -70,7 +68,7 @@ qroc.moodle( "Comment s'appelle cette biblioth&egrave;que&thinsp;?", "SARP.Moodl
 finir_xml.moodle( )
 
 # Importez le fichier exemple.categorie.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.categorie.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.categorie.xml dans Moodle pour voir le résultat..." )
 }
-%% \keyword{ ~kwd1 }
-%% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}

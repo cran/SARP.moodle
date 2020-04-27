@@ -33,15 +33,13 @@ Aucune valeur n'est renvoyée par cette fonction.
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
 }
-%\note{
-%%  ~~further notes~~
-%}
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{\code{\link{numerique.moodle}}, \code{\link{qcm.moodle}},
   \code{\link{qroc.moodle}}, \code{\link{vrai_faux.moodle}}
 }
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.ouverte" )
 
@@ -55,5 +53,7 @@ question_ouverte.moodle( "Racontez votre journ&eacute;e." )
 finir_xml.moodle( )
 
 # Importez le fichier exemple.ouverte.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.ouverte.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.ouverte.xml dans Moodle pour voir le résultat..." )
+}
 }

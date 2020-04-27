@@ -26,7 +26,8 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
                               titre = "Question vrai-faux...",
                               ordre = c( "aleatoire", NA, "random", "vrai premier", "faux premier" ),
                               melanger = FALSE,
-                              fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
+                              fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
+                              commentaire.global = NA ) {
     ## On détermine l'ordre des réponses
     if ( any( is.null( ordre ), is.character( ordre ) ) ) {
         melanger = FALSE
@@ -56,7 +57,7 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
 
     question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                      titre = titre, texte = texte, reponses = reponses,
-                     autres.codes = codes )
+                     autres.codes = codes, commentaire.global = commentaire.global  )
 }
 
 ######################################################################
@@ -67,7 +68,8 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
                         commentaires = NULL, fractions = list( "Bonnes" = NULL, "Fausses" = NULL ),
                         unique = ( length( bonnes.reponses ) == 1 ), melanger = TRUE,
                         titre = "QCM...", numerotation = c( "none", "abc", "ABCD", "123" ),
-                        fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
+                        fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
+                        commentaire.global = NA ) {
   ## On prépare les réponses
   n.bonnes <- length( bonnes.reponses )
   if ( n.bonnes < 1 ) {
@@ -109,6 +111,9 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
     } else if ( n.fractions > n.mauvaises ) {
       stop( "Plus de pourcentage de p\u00e9nalit\u00e9 que de mauvaise r\u00e9ponses... " )
     } else {
+        if ( any( is.na( fractions$Fausses ) ) ) {
+            fractions$Fausses[ which( is.na( fractions$Fausses ) ) ] <- 0
+        }
         if ( all( fractions$Fausses >= 0 ) ) {
             fractions$Fausses <- -fractions$Fausses
         }
@@ -146,7 +151,7 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
   ## On fait la question
   question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                    titre = titre, texte = texte, reponses = reponses,
-                   autres.codes = codes )
+                   autres.codes = codes, commentaire.global = commentaire.global )
 }
 
 ######################################################################
@@ -156,7 +161,8 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
 qroc.moodle <- function( texte, reponses, notes = rep( 100, length( reponses ) ),
                          commentaires = NULL, casse = TRUE,
                          titre = "QROC...",
-                         fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
+                         fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
+                         commentaire.global = NA ) {
   ## On construit les réponses
   reponses <- paste0( "<![CDATA[", reponses, "]]>" )
   attr( reponses, "fractions" ) <- notes
@@ -170,5 +176,5 @@ qroc.moodle <- function( texte, reponses, notes = rep( 100, length( reponses ) )
   ## On fait la question
   question.moodle( fichier.xml = fichier.xml, type = "shortanswer",
                    titre = titre, texte = texte, reponses = reponses,
-                   autres.codes = codes )
+                   autres.codes = codes, commentaire.global = commentaire.global )
 }

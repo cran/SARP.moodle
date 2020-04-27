@@ -4,3 +4,9 @@ exportPattern("\\.moodle$") # Les fonctions se terminant par .moodle
 ## Les fonctions extérieures utilisées...
 importFrom("stats", "na.omit")
 importFrom("utils", "read.table")
+importFrom("utils", "capture.output")
+importFrom("base64enc", "base64encode")
+
+## Les méthodes...
+S3method( sortie_R.moodle, call  )
+S3method( sortie_R.moodle, htest )

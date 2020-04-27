@@ -7,6 +7,12 @@
 ## Historique
 ##   12 juillet 2016 : supprimé les accents directs restants
 ##                     enjolivé les commentaires
+##
+##   19 avril   2020 : types MULTICHOICE_?S ajoutés
+##                       (ordre des réponses mélangé)
+##
+##   20 avril   2020 : souplesse et contrôles dans les réponses
+##                       multiples aux questions cloze
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -39,51 +45,76 @@ question_ouverte.moodle <- function( texte,
 ##  (attention, fonction non-exportée)
 ##
 generer_question <- function( note = NA, type, reponses, commentaires ) {
-  ## Préparation des réponses : le plus long
+    ## Préparation des réponses : le plus long
   
-  if ( type == "NUMERICAL" ) {
-    if ( length( reponses ) != 1 ) {
-        if ( is.list( reponses ) ) {
+    if ( type == "NUMERICAL" ) {
+        if ( length( reponses ) != 1 ) {
+            if ( is.list( reponses ) ) {
+            } else {
+                ## Plusieurs variantes de réponses correctes
+                reponse <- paste0( "=", reponses, "#", commentaires )
+                reponse <- paste0( reponse, collapse = "~" )
+            }
         } else {
-            ## Plusieurs variantes de réponses correctes
-            reponse <- paste0( "=", reponses, "#", commentaires )
-            reponse <- paste0( reponse, collapse = "~" )
+            reponse <- paste0( "=", reponses )
+            if ( nchar( commentaires[ 1 ] ) > 0 ) reponse <- paste0( reponses, "#", commentaires )
         }
-    } else {
-        reponse <- paste0( "=", reponses )
-        if ( nchar( commentaires[ 1 ] ) > 0 ) reponse <- paste0( reponses, "#", commentaires )
     }
-  }
-  if ( type %in% c( "MULTICHOICE", "MULTICHOICE_V", "MULTICHOICE_H",
-                    "SHORTANSWER", "SHORTANSWER_C" ) ) {
-    txt.reponses  <- reponses$Textes
-    txt.correctes <- reponses$Correct
+    if ( type %in% c( "MULTICHOICE"  , "MULTICHOICE_V" , "MULTICHOICE_H" ,
+                      "MULTICHOICE_S", "MULTICHOICE_VS", "MULTICHOICE_HS",
+                      "SHORTANSWER", "SHORTANSWER_C" ) ) {
+        ## On contrôle la structure des réponses
+        ##   Si un vecteur : supposé contenir que des bonnes réponses
+        if ( FALSE == is.list( reponses ) ) {
+            if ( ! type %in% c( "SHORTANSWER", "SHORTANSWER_C" ) ) {
+                stop( "Format de r\u00e9ponse incorrect, liste attendue\n",
+                      "[type = ", type , ", reponses = {", 
+                     paste0( reponses, collapse = ", " ), "}]" )
+            }
+            reponses <- list( "Textes" = reponses,
+                              "Correct" = rep( TRUE, length( reponses ) ) )
+        }
+        if ( length( reponses ) != 2 ) {
+            stop( "Les r\u00e9ponses doivent former une liste de 2 \u00e9l\u00e9ments" )
+        }
+        if ( is.null( names( reponses ) ) ) {
+            names( reponses ) <- c( "Textes", "Correct" )
+        }
 
-    n.correctes <- length( which( txt.correctes == TRUE ) )
-    if ( n.correctes == 0 ) {
-      warning( "Aucune r\u00e9ponse correcte parmi celles indiqu\u00e9es !",
-               "(R\u00e9ponses : ", paste0( "[", txt.reponses, "]", collapse = " // " ), ")" )
-      points <- 0
-      correct <- ""
-    } else {
-      if ( 1 == n.correctes ) {
-        correct <- ifelse( txt.correctes, "=", "" )
-      } else {
-        points <- round( 100 / n.correctes, 3 )
-        correct <- paste0( "%", ifelse( txt.correctes, points, 0 ), "%" )
-      }
+        ## On récupère les réponses et leur justesse
+        txt.reponses  <- reponses$Textes
+        txt.correctes <- reponses$Correct
+
+        n.correctes <- length( which( txt.correctes == TRUE ) )
+        if ( n.correctes == 0 ) {
+            warning( "Aucune r\u00e9ponse correcte parmi celles indiqu\u00e9es !",
+                     "(R\u00e9ponses : ", paste0( "[", txt.reponses, "]", collapse = " // " ), ")" )
+            points <- 0
+            correct <- ""
+        } else {
+            if ( 1 == n.correctes ) {
+                correct <- ifelse( txt.correctes, "=", "" )
+            } else {
+                stop( "Moodle n'autorise pas plusieurs r\u00e9ponses correctes",
+                      " dans une question multiple cloze (l'import \ue00e9choue)\n",
+                      " [type = ", type , ", reponses = {", 
+                      paste0( reponses, collapse = ", " ), "}]" )
+
+                points <- round( 100 / n.correctes, 3 )
+                correct <- paste0( "%", ifelse( txt.correctes, points, 0 ), "%" )
+            }
+        }
+
+        reponse <- paste0( correct, reponses$Textes,
+                           ifelse( is.na( commentaires ), "", paste0( "#", commentaires ) ) )
+        reponse <- paste0( reponse, collapse = "~" )
     }
-
-    reponse <- paste0( correct, reponses$Textes,
-                       ifelse( is.na( commentaires ), "", paste0( "#", commentaires ) ) )
-    reponse <- paste0( reponse, collapse = "~" )
-  }
   
-  question <- paste0( "{", if ( is.finite( note ) ) note,
-                      ":", type, ":",
-                      reponse,
-                      "}" )
-  question
+    question <- paste0( "{", if ( is.finite( note ) ) note,
+                        ":", type, ":",
+                        reponse,
+                        "}" )
+    question
 }
 
 ######################################################################

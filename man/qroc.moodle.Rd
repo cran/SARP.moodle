@@ -13,7 +13,8 @@
 qroc.moodle( texte, reponses, notes = rep( 100, length( reponses ) ),
              commentaires = NULL, casse = TRUE,
              titre = "QROC...",
-             fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
+             fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
+             commentaire.global = NA )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -40,6 +41,10 @@ qroc.moodle( texte, reponses, notes = rep( 100, length( reponses ) ),
 
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
+  
+  \item{commentaire.global}{ Un vecteur de chaînes de caractère, de longueur
+    1, indiquant le commentaire global à afficher après que l'étudiant a
+    répondu. }
 }
 \details{ 
 Cette fonction est une interface simplifiée, et enrichie, pour la
@@ -51,15 +56,12 @@ Aucune valeur n'est renvoyée par cette fonction.
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
 }
-%\note{
-%%  ~~further notes~~
-%}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{\code{\link{numerique.moodle}}, \code{\link{qcm.moodle}},
   \code{\link{question_ouverte.moodle}}, \code{\link{vrai_faux.moodle}}
 }
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.qroc" )
 
@@ -80,5 +82,7 @@ qroc.moodle( "Quel est le prénom de Victor&nbsp;H<small>UGO</small>&thinsp;?",
 finir_xml.moodle( )
 
 # Importez le fichier exemple.numerique.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.numerique.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.numerique.xml dans Moodle pour voir le résultat..." )
+}
 }

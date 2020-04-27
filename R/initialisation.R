@@ -12,6 +12,10 @@
 ##                     [sinon, erreur quand test CRAN sur Solaris…]
 ##
 ##   31 mars    2017 : en terminant, on remet les options comme elles étaient…
+##
+##   24 mars    2020 : liste des images internes créées, pour éviter les doublons…
+##
+##   19 avril   2020 : dossier local d'image paramétrable
 ## ─────────────────────────────────────────────────────────────────
 
 # L'environnement local
@@ -30,7 +34,8 @@ assign( "decimal"      , ',' , envir = SARP.Moodle.env )  # Le séparateur déci
 
 assign( "nombre.chiffres",  2, envir = SARP.Moodle.env ) # Combien de chiffres _décimaux_ dans les sorties XML ?
 
-assign( "URL_base", NULL, envir = SARP.Moodle.env ) # L'URL donnant le dossier des images dans Moodle
+assign( "URL_base"      , NULL, envir = SARP.Moodle.env ) # L'URL donnant le dossier des images dans Moodle
+assign( "dossier.images", "." , envir = SARP.Moodle.env ) # Le dossier local contenant les images à insérer
 
 assign( "styles", list( "erreur" = "color: Red; font-weight: bold;" ),
         envir = SARP.Moodle.env ) # Les styles par défaut pour divers éléments fréquents...
@@ -52,6 +57,7 @@ debuter_xml.moodle <- function( fichier.xml,   # Le nom du fichier XML à créer
 
     ## On réinitialise le compteur des figures
     assign( "numero.figure", 0, envir = SARP.Moodle.env )
+    assign( "liste.images", character(), envir = SARP.Moodle.env ) # La liste des images
 
     ## On mémorise les options avant l'analyse
     assign( "vieilles.options", options(), envir = SARP.Moodle.env )

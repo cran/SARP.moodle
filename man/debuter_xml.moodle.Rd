@@ -74,6 +74,7 @@ finir_xml.moodle(fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ))
   décimal à l'affichage.
 }
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple" )
 
@@ -84,7 +85,9 @@ vrai_faux.moodle( "Cette question a deux réponses" )
 finir_xml.moodle( )
 
 # Importez le fichier exemple.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.xml dans Moodle pour voir le résultat..." )
+}
 }
 %% \keyword{ ~kwd1 }
 %% \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

@@ -24,7 +24,12 @@ csv.moodle(fichier.csv,
            creer.titre = TRUE, lg.titre = 30,
            embellir = TRUE, deja.HTML = FALSE,
            forcer.multiple = TRUE, melanger.reponses = TRUE,
+           somme.nulle = FALSE, precision = 3,
            categorie.base = "",
+           dossier.images = ".", 
+           sep.images = c( '@@', '@@' ), inserer.images = TRUE,
+           sep.formules = c( '@\\\\$', '\\\\$@' ),
+           sep.SMILES = c( '@\\\\{', '\\\\}@' ),
            sep = ";", header = TRUE, quote = '\"',
            ... )
 }
@@ -117,9 +122,9 @@ csv.moodle(fichier.csv,
     Si \code{TRUE}, les questions avec plusieurs réponses sont toujours
     considérées comme des réponses à choix multiples (l'étudiant pourra
     cocher plusieurs réponses). Sinon, si une seule bonne réponse est
-    proposée (c'est-à-dire s'il existe une réponse donnant 100 \% des
+    proposée (plus exactement, s'il existe au moins une réponse donnant 100 \% des
     points), la question est à choix unique (l'étudiant ne pourra
-    choisir qu'une seule réponse).  Cette option est ignoré pour les
+    choisir qu'une seule réponse).  Cette option est ignorée pour les
     questions qui auraient une valeur indiquée dans la colonne précisée
     dans \code{colonne.type}.
   }
@@ -129,11 +134,46 @@ csv.moodle(fichier.csv,
     réponses lorsqu'il pose la question. Sinon, l'ordre du fichier est
     tout le temps utilisé.
   }
+
+  \item{somme.nulle}{
+    Cette option précise comment gérer les réponses incorrectes dans un
+    QCM.  Si \code{FALSE}, la note de ces réponses est déterminée à
+    partir du fichier, le code FAUX étant associé à une note nulle.
+    Si \code{TRUE}, les réponses incorrectes se voient attribuer une
+    note négative telle que la somme de ces notes vaut -1, de sorte que
+    si l'étudiant coche toutes les cases du QCM, il a 0 (sauf bien sûr
+    si toutes les cases correspondent à des questions correctes...).
+  }
+
+  \item{precision}{Le nombre de décimales à donner dans la réponse, pour
+    une réponse numérique (utilisez \code{NA} pour une valeur exacte et
+    ne pas avoir de message indiquant le nombre de décimales ajouté au
+    texte de la question).
+  }
   
   \item{categorie.base}{
     La catégorie de base à utiliser pour créer les questions. Elle
     contiendra toute les sous-catégories du fichier, s'il y en a.
   }
+
+  \item{dossier.images}{ Le dossier d'image où trouver les images à
+    intégrer au fichier XML, ou l'URL de base pour les trouver dans
+    Moodle (voir \code{\link{definir_dossier.image.moodle}}). }
+
+  \item{sep.images}{ Les codes servant à encadrer un nom d'image dans
+    les textes du fichier CSV. }
+
+  \item{inserer.images}{ Si \code{TRUE}, les images sont incluses dans
+    le fichier XML. Sinon, seul le lien est construit. }
+  
+  \item{sep.formules}{ Les codes servant à encadrer une formule
+    mathématique à convertir grâce à latex dans les textes du fichier
+    CSV. }
+  
+  \item{sep.SMILES}{ Les codes servant à encadrer un code SMILES à
+    convertir en formule chimique grâce à openbabel dans les textes du
+    fichier CSV. }
+  
   \item{sep, header, quote}{
     Options pour \code{\link{read.table}}, correspondant au format d'un
     fichier CSV par défaut lorsqu'il est créé par Libre office ou Excel.
@@ -177,10 +217,14 @@ csv.moodle(fichier.csv,
   notes associées à chaque réponse. Cette note peut être précise,
   exprimée en pourcentage suivant la convention Moodle, ou indicative,
   avec la simple mention « Vrai » pour les bonnes réponses et « Faux »
-  pour les mauvaises. Dans le deuxième cas, les mauvaises réponses sont
-  associées à la note 0 et les bonnes à la fraction correspondante de
-  bonne réponse, de sorte que cocher toutes les bonnes réponses donne la
-  note totale.
+  pour les mauvaises. Dans le deuxième cas, les bonnes réponses sont
+  associées à l'inverse du nombre de bonnes réponses, de sorte que
+  cocher toutes les bonnes réponses donne la note totale; les mauvaises
+  réponses sont associées à la note 0 (si \code{somme.nulle=FALSE}:
+  cocher ou non ces réponses ne change rien à la note) ou à l'oppose de
+  l'inverse du nombre de mauvaises réponses (si \code{somme.nulle=TRUE}:
+  cocher ces réponses diminue la note et cocher toutes les réponses
+  donne une somme nulle).
 
   \strong{Construire des questions \dQuote{\emph{cloze}}}
 
@@ -199,7 +243,27 @@ csv.moodle(fichier.csv,
   \code{colonne.reponse} et sert à définir le type de champ de réponse
   (selon la logique des questions en une ligne).  Pour avoir un texte
   après le dernier champ de réponse, laissez la colonne
-  \code{colonne.reponse} tout en gardant le même code de question.
+  \code{colonne.reponse} tout en gardant le même code de question. Pour
+  avoir des questions avec réponse à choisir dans une liste, mettez une
+  réponse par ligne sans mettre d'énoncé avant. La colonne
+  \code{colonne.type} permet de préciser le type d'affichage, avec les
+  codes Moodle (\code{MULTICHOICE}, \code{multichoice_s}...)
+
+  \strong{Insérer des images}
+
+  Il est possible de faire référence à une image dans les textes
+  (énoncés, réponses, commentaires) en encadrant le nom de fichier de
+  l'image par les séparateurs choisis, par défaut \code{@@}. Il est
+  possible de redimensionner l'image en faisant suivre le nom de l'image
+  d'un point d'exclamation, puis de la largeur, du caractère x et de la
+  hauteur.  Attention, il semblerait que Moodle ne déforme pas les
+  images, quelles que soient les dimensions demandées.  Par défaut,
+  l'image sera incluse au fichier XML.
+
+  Deux types d'image peuvent être créés au vol : les formules
+  mathématiques et les formules chimiques. Voir les fonctions
+  \code{\link{inserer_formule.moodle}} et
+  \code{\link{inserer_SMILES.moodle}} pour plus de détails.
 }
 \section{Attention!}{
     Moodle est assez peu permissif pour les notes

@@ -112,7 +112,9 @@ Aucune valeur n'est renvoyée par cette fonction.
 \seealso{\code{\link{numerique.moodle}}, \code{\link{qcm.moodle}},
   \code{\link{qroc.moodle}}, \code{\link{question_ouverte.moodle}}, \code{\link{vrai_faux.moodle}}
 }
+
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.libre" )
 
@@ -150,5 +152,7 @@ question_libre.moodle( "<cite>Le Corbeau et le Renard</cite>.",
 finir_xml.moodle( )
 
 # Importez le fichier exemple.libre.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.libre.xml dans Moodle pour voir le r\u00e9sultat..." )
+print(
+"Importez le fichier exemple.libre.xml dans Moodle pour voir le r\u00e9sultat..." )
+}
 }

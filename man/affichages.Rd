@@ -77,6 +77,7 @@ afficher_nombre.moodle( x,
 }
 
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.affichages" )
 
@@ -101,5 +102,7 @@ numerique.moodle( paste0( "Donnez la plus petite valeur de l'échantillon ci-des
 finir_xml.moodle( )
 
 # Importez le fichier exemple.affichages.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.affichages.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.affichages.xml dans Moodle pour voir le résultat..." )
+}
 }

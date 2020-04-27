@@ -15,7 +15,8 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
             unique = ( length( bonnes.reponses ) == 1 ), melanger = TRUE,
             titre = "QCM...",
             numerotation = c( "none", "abc", "ABCD", "123" ),
-            fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
+            fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
+            commentaire.global = NA )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -73,6 +74,10 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
 
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
+  
+  \item{commentaire.global}{ Un vecteur de chaînes de caractère, de longueur
+    1, indiquant le commentaire global à afficher après que l'étudiant a
+    répondu. }
 }
 
 \details{ La question générée avec cette fonction est une question de
@@ -92,6 +97,7 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
   \code{\link{qroc.moodle}}, \code{\link{question_ouverte.moodle}}, \code{\link{vrai_faux.moodle}}
 }
 \examples{
+\dontrun{
 # Commencer un nouveau questionnaire
 q <- debuter_xml.moodle( "exemple.QCM" )
 
@@ -116,5 +122,7 @@ qcm.moodle( "Indiquez les romanciers de la liste ci-dessous.",
 finir_xml.moodle( )
 
 # Importez le fichier exemple.QCM.xml dans Moodle pour voir le résultat...
-print( "Importez le fichier exemple.QCM.xml dans Moodle pour voir le résultat..." )
+print(
+"Importez le fichier exemple.QCM.xml dans Moodle pour voir le résultat..." )
+}
 }
