@@ -10,6 +10,9 @@
 ##   24 mars 2020 : densité par défaut, 150 (images trop grandes sinon)
 ##
 ##   21 avr. 2020 : insertion de formules chimiques grâce à SMILES/openbabel
+##
+##   30 avr. 2020 : pour SMILES, possibilité d'indiquer un nom de molécule
+##                    qui servira comme description de l'image
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -134,7 +137,7 @@ inserer_formule.moodle <- function( formule, marge = 2, displaystyle = TRUE,
 ## 
 ## —————————————————————————————————————————————————————————————————
 
-inserer_SMILES.moodle <- function( code.SMILES, 
+inserer_SMILES.moodle <- function( code.SMILES, nom.molecule = code.SMILES,
                                    largeur = 300, hauteur = 300,
                                    couleur.atomes = TRUE,
                                    couleur.fond = NA,
@@ -231,7 +234,7 @@ inserer_SMILES.moodle <- function( code.SMILES,
     ## On construit le code pour insérer l'image...
     ##
     code.XML <- lier_image.moodle( nom.fichier,
-                                   description = code.SMILES, interne = TRUE )
+                                   description = nom.molecule, interne = TRUE )
 
     ## On renvoie le code XML
     code.XML

@@ -34,6 +34,12 @@
 ##  26 avril   2020 : corrections mineures pour soumission au CRAN
 ##
 ##  27 avril   2020 : possibilité de préciser le nombre de décimales
+##
+##  30 avril   2020 : codage d'une description pour une image : |texte (en fin de code)
+##                    corrigé la détection des réponses entières...
+##
+##  12 mai     2020 : possibilité de donner une note à la question [1 par défaut]
+##                    possibilité de donner une pénalité à la question [aucune par défaut]
 ## ——————————————————————————————————————————————————————————————————————
 
 ## La seule fonction visible de l'extérieur...
@@ -53,11 +59,13 @@
 ## colonne.texte   = la colonne qui contient les textes des énoncés
 ## colonne.reponse = la colonne qui contient la ou les textes des réponses
 ## colonne.note    = la colonne qui contient la note associée à chaque réponse
+## colonne.note_question = la colonne qui contient la note globale de la question
 ## colonne.titre   = la colonne qui contient le titre des questions (NA : aucune)
 ## colonne.code    = la colonne qui contient le code de la question (NA : aucune)
 ## colonne.type    = la colonne qui contient le type de question (NA : aucune)
 ## colonne.retour  = la colonne qui contient le texte du commentaire à afficher en cas de (mauvaise) réponse
 ## colonne.global  = la colonne qui contient le texte du commentaire à afficher après résolution
+## colonne.penalite = la colonne qui contient la pénalité de nouvelle tentative de la question
 ##
 ## creer.titre : si TRUE, on construit un titre à la question
 ## embellir    : si TRUE, on modifie les textes pour enjoliver la présentation
@@ -79,10 +87,13 @@
 ## 
 csv.moodle <- function( fichier.csv,
                         colonne.texte = 'Question',
-                        colonne.reponse = 'R\u00e9ponse', colonne.note = NA,
+                        colonne.reponse = 'R\u00e9ponse',
+                        colonne.note = NA, colonne.note_question = NA,
                         colonne.titre = NA, colonne.code = NA, colonne.type = NA,
-                        colonne.retour = NA, colonne.global = NA,
-                        fichier.xml = if ( TRUE == nv.fichier ) gsub( "\\.[Cc][Ss][Vv]$", ".xml", fichier.csv )
+                        colonne.retour = NA, colonne.global = NA, colonne.penalite = NA,
+                        fichier.xml = if ( TRUE == nv.fichier ) gsub( "\\.[Cc][Ss][Vv]$",
+                                                                      ".xml",
+                                                                      fichier.csv )
                                       else get( "fichier.xml", envir = SARP.Moodle.env ),
                         nv.fichier = TRUE,
                         creer.titre = TRUE, lg.titre = 30, embellir = TRUE, deja.HTML = FALSE,
@@ -124,6 +135,10 @@ csv.moodle <- function( fichier.csv,
               ( is.integer( colonne.note ) && ( colonne.note < 1 ) ),
               ( is.character( colonne.note ) && ( nchar( colonne.note ) < 1 ) ) ) ) colonne.note <- NA
 
+    if ( any( is.null( colonne.note_question ),
+              ( is.integer( colonne.note_question ) && ( colonne.note_question < 1 ) ),
+              ( is.character( colonne.note_question ) && ( nchar( colonne.note_question ) < 1 ) ) ) ) colonne.note_question <- NA
+
     if ( any( is.null( colonne.code ),
               ( is.integer( colonne.code ) && ( colonne.code < 1 ) ),
               ( is.character( colonne.code ) && ( nchar( colonne.code ) < 1 ) ) ) ) colonne.code <- NA
@@ -139,6 +154,10 @@ csv.moodle <- function( fichier.csv,
     if ( any( is.null( colonne.global ),
               ( is.integer( colonne.global ) && ( colonne.global < 1 ) ),
               ( is.character( colonne.global ) && ( nchar( colonne.global ) < 1 ) ) ) ) colonne.global <- NA
+
+    if ( any( is.null( colonne.penalite ),
+              ( is.integer( colonne.penalite ) && ( colonne.penalite < 1 ) ),
+              ( is.character( colonne.penalite ) && ( nchar( colonne.penalite ) < 1 ) ) ) ) colonne.penalite <- NA
 
     ## On contrôle la précision
     if ( missing( precision ) ) precision <- 3
@@ -216,29 +235,31 @@ csv.moodle <- function( fichier.csv,
 
         ## On fait le traitement réel...
         d <- csv_vers_moodle( fichier.csv = f,
-                              colonne.texte   = colonne.texte,
-                              colonne.reponse = colonne.reponse,
-                              colonne.note    = colonne.note,
-                              colonne.titre   = colonne.titre,
-                              colonne.code    = colonne.code,
-                              colonne.type    = colonne.type,
-                              colonne.retour  = colonne.retour,
-                              colonne.global  = colonne.global,
-                              fichier.xml     = fichier.xml, 
-                              creer.titre     = creer.titre,
-                              lg.titre        = lg.titre   ,
-                              embellir        = embellir   ,
-                              deja.HTML       = deja.HTML  ,
-                              forcer.multiple = forcer.multiple,
+                              colonne.texte    = colonne.texte,
+                              colonne.reponse  = colonne.reponse,
+                              colonne.note     = colonne.note,
+                              colonne.note_question = colonne.note_question,
+                              colonne.titre    = colonne.titre,
+                              colonne.code     = colonne.code,
+                              colonne.type     = colonne.type,
+                              colonne.retour   = colonne.retour,
+                              colonne.global   = colonne.global,
+                              colonne.penalite = colonne.penalite,
+                              fichier.xml      = fichier.xml, 
+                              creer.titre      = creer.titre,
+                              lg.titre         = lg.titre   ,
+                              embellir         = embellir   ,
+                              deja.HTML        = deja.HTML  ,
+                              forcer.multiple  = forcer.multiple,
                               melanger.reponses = melanger.reponses,
-                              somme.nulle     = somme.nulle,
-                              precision       = precision,
-                              categorie.base  = categorie.base,
-                              dossier.images  = dossier.images,
-                              sep.images      = sep.images,
-                              inserer.images  = inserer.images,
-                              sep.formules    = sep.formules,
-                              sep.SMILES      = sep.SMILES,
+                              somme.nulle      = somme.nulle,
+                              precision        = precision,
+                              categorie.base   = categorie.base,
+                              dossier.images   = dossier.images,
+                              sep.images       = sep.images,
+                              inserer.images   = inserer.images,
+                              sep.formules     = sep.formules,
+                              sep.SMILES       = sep.SMILES,
                               sep = sep, header = header, quote = quote,
                               ... )
         l[[ f ]] <- d
@@ -255,9 +276,9 @@ csv.moodle <- function( fichier.csv,
 }
 
 csv_vers_moodle <- function( fichier.csv,
-                             colonne.texte, colonne.reponse, colonne.note,
+                             colonne.texte, colonne.reponse, colonne.note, colonne.note_question,
                              colonne.titre, colonne.code, colonne.type,
-                             colonne.retour, colonne.global,
+                             colonne.retour, colonne.global, colonne.penalite,
                              fichier.xml,
                              creer.titre, lg.titre, embellir, deja.HTML,
                              forcer.multiple, melanger.reponses, somme.nulle,
@@ -284,6 +305,16 @@ csv_vers_moodle <- function( fichier.csv,
              " [", noms.colonnes[ colonne.note ], "]\n", sep = "" )
     }
 
+    ##  1bis) colonne des notes globales de la question
+    if ( all( any( c( "note.question",
+                      "note.globale" ) %in% tolower( noms.colonnes ) ),
+              is.na( colonne.note_question ) ) ) {
+        colonne.note_question <- which( tolower( noms.colonnes ) %in% c( "note.question",
+                                                                         "note.globale" ) )[ 1 ]
+        cat( "  Colonne de note d\u00e9tect\u00e9e : colonne ", colonne.note_question,
+             " [", noms.colonnes[ colonne.note_question ], "]\n", sep = "" )
+    }
+    
     ##  2) colonne des types de question
     if ( all( any( "type" %in% tolower( noms.colonnes ) ), is.na( colonne.type ) ) ) {
         colonne.type <- which( tolower( noms.colonnes ) %in% "type" )[ 1 ]
@@ -299,6 +330,16 @@ csv_vers_moodle <- function( fichier.csv,
              " [", noms.colonnes[ colonne.code ], "]\n", sep = "" )
     }
 
+    ##  4) colonne des pénalités de nouvelle tentative de la question
+    if ( all( any( c( "penalite", "p\u00e8nalit\u00e8", "penalty" ) %in% tolower( noms.colonnes ) ), 
+              is.na( colonne.penalite ) ) ) {
+        colonne.penalite <- which( tolower( noms.colonnes ) %in% c( "penalite",
+                                                                    "p\u00e8nalit\u00e8",
+                                                                    "penalty" ) )[ 1 ]
+        cat( "  Colonne de p\u00e8nalit\u00e8 d\u00e9tect\u00e9e : colonne ", colonne.penalite,
+             " [", noms.colonnes[ colonne.penalite ], "]\n", sep = "" )
+    }
+
 
     ## … et on repère celles indiquées, si ce ne sont pas des nombres.
     ##   (remarque : si absente, NA : is.integer vaut FALSE
@@ -307,20 +348,22 @@ csv_vers_moodle <- function( fichier.csv,
     if ( is.integer( colonne.texte   ) ) colonne.texte   <- noms.colonnes[ colonne.texte   ]
     if ( is.integer( colonne.reponse ) ) colonne.reponse <- noms.colonnes[ colonne.reponse ]
     if ( is.integer( colonne.note    ) ) colonne.note    <- noms.colonnes[ colonne.note    ]
+    if ( is.integer( colonne.note_question ) ) colonne.note_question <- noms.colonnes[ colonne.note_question ]
     if ( is.integer( colonne.titre   ) ) colonne.titre   <- noms.colonnes[ colonne.titre   ]
     if ( is.integer( colonne.code    ) ) colonne.code    <- noms.colonnes[ colonne.code    ]
     if ( is.integer( colonne.type    ) ) colonne.type    <- noms.colonnes[ colonne.type    ]
     if ( is.integer( colonne.retour  ) ) colonne.retour  <- noms.colonnes[ colonne.retour  ]
     if ( is.integer( colonne.global  ) ) colonne.global  <- noms.colonnes[ colonne.global  ]
+    if ( is.integer( colonne.penalite ) ) colonne.penalite <- noms.colonnes[ colonne.penalite ]
 
     cat( "  Colonne des \u00e9nonc\u00e9s      : ", colonne.texte  , "\n" )
     cat( "  Colonne des r\u00e9ponses     : "     , colonne.reponse, "\n" )
     
     ## On vérifie qu'il n'y a pas de doublons
     if ( any( duplicated( na.omit( c( colonne.texte, colonne.reponse,
-                                      colonne.note, colonne.titre,
+                                      colonne.note, colonne.note_question, colonne.titre,
                                       colonne.code, colonne.type,
-                                      colonne.retour, colonne.global ) ) ) ) ) {
+                                      colonne.retour, colonne.global, colonne.penalite ) ) ) ) ) {
         stop( "Une m\u00eame colonne ne peut pas servir \u00e0 deux informations distinctes !" )
     }
 
@@ -400,7 +443,7 @@ csv_vers_moodle <- function( fichier.csv,
     }
 
     if ( all( length( sep.formules ) == 2 ) ) { 
-        cat( " Conversion des formules...\n\n" )
+        cat( " Conversion des formules...\n" )
         
         d[ , colonne.texte   ] <- traiter_formules( d[ , colonne.texte   ], sep.formules ) # Énoncé
         d[ , colonne.reponse ] <- traiter_formules( d[ , colonne.reponse ], sep.formules ) # Réponse
@@ -413,7 +456,7 @@ csv_vers_moodle <- function( fichier.csv,
     }
 
     if ( all( length( sep.SMILES ) == 2 ) ) { 
-        cat( " Conversion des codes SMILES...\n\n" )
+        cat( " Conversion des codes SMILES...\n" )
         
         d[ , colonne.texte   ] <- traiter_SMILES( d[ , colonne.texte   ], sep.SMILES ) # Énoncé
         d[ , colonne.reponse ] <- traiter_SMILES( d[ , colonne.reponse ], sep.SMILES ) # Réponse
@@ -425,30 +468,35 @@ csv_vers_moodle <- function( fichier.csv,
         }
     }
 
+    ## Étape de conversions éventuelles finie
+    cat( "\n" )
+
     ## On travaille par question…
     for( q in codes ) {
         cat( " Conversion de la question ", q, "\n" )
         dq <- d[ which( d$I_Code.interne == q ), ]
 
         convertir_question( question = dq,
-                            colonne.texte   = colonne.texte,
-                            colonne.reponse = colonne.reponse,
-                            colonne.note    = colonne.note,
-                            colonne.titre   = colonne.titre,
-                            colonne.type    = colonne.type,
-                            colonne.retour  = colonne.retour,
-                            colonne.global  = colonne.global,
-                            fichier.xml     = fichier.xml,
-                            embellir        = embellir,
-                            deja.HTML       = deja.HTML,
-                            forcer.multiple = forcer.multiple,
+                            colonne.texte     = colonne.texte,
+                            colonne.reponse   = colonne.reponse,
+                            colonne.note      = colonne.note,
+                            colonne.note_question = colonne.note_question,
+                            colonne.titre     = colonne.titre,
+                            colonne.type      = colonne.type,
+                            colonne.retour    = colonne.retour,
+                            colonne.global    = colonne.global,
+                            colonne.penalite  = colonne.penalite,
+                            fichier.xml       = fichier.xml,
+                            embellir          = embellir,
+                            deja.HTML         = deja.HTML,
+                            forcer.multiple   = forcer.multiple,
                             melanger.reponses = melanger.reponses,
-                            somme.nulle     = somme.nulle,
-                            precision       = precision,
-                            categorie.base  = categorie.base,
-                            dossier.images  = dossier.images,
-                            sep.images      = sep.images,
-                            sep.formules    = sep.formules )
+                            somme.nulle       = somme.nulle,
+                            precision         = precision,
+                            categorie.base    = categorie.base,
+                            dossier.images    = dossier.images,
+                            sep.images        = sep.images,
+                            sep.formules      = sep.formules )
     }
     
     ## On renvoie la base des questions...
@@ -456,9 +504,10 @@ csv_vers_moodle <- function( fichier.csv,
 }
 
 convertir_question <- function( question,
-                                colonne.texte, colonne.reponse, colonne.note,
+                                colonne.texte, colonne.reponse, 
+                                colonne.note, colonne.note_question,
                                 colonne.titre, colonne.type,
-                                colonne.retour, colonne.global,
+                                colonne.retour, colonne.global, colonne.penalite,
                                 fichier.xml,
                                 embellir, deja.HTML,
                                 forcer.multiple, melanger.reponses, somme.nulle,
@@ -528,7 +577,38 @@ convertir_question <- function( question,
         commentaire.global <- NA
     }
 
-    
+    ## Une note globale éventuelle
+    note.question <- NA
+    if ( FALSE == is.na( colonne.note_question ) ) {
+        note.question <- unique( question[ , colonne.note_question ] )
+        if ( length( note.question ) > 1 ) {
+            note.question <- na.omit( note.question )
+        }
+        if ( length( note.question ) > 1 ) {
+            warning( "Plusieurs notes distinctes pour la m\u00eame question.",
+                     " Seule la premi\u00e8re sera utilis\u00e8e." )
+            note.question <- note.question[ 1 ]
+        }
+    }
+    if ( is.na( note.question ) ) {
+        ## Note par défaut : 1
+        note.question <- 1
+    }
+
+    ## Une pénalité éventuelle
+    penalite.question <- NA
+    if ( FALSE == is.na( colonne.penalite ) ) {
+        penalite.question <- unique( question[ , colonne.penalite ] )
+        if ( length( penalite.question ) > 1 ) {
+            penalite.question <- na.omit( penalite.question )
+        }
+        if ( length( penalite.question ) > 1 ) {
+            warning( "Plusieurs p\u00e8nalit\u00e8s distinctes pour la m\u00eame question.",
+                     " Seule la premi\u00e8re sera utilis\u00e8e." )
+            penalite.question <- penalite.question[ 1 ]
+        }
+    }
+
     ###################################
     ##
     ##  Cas des questions à réponse unique
@@ -562,7 +642,7 @@ convertir_question <- function( question,
                  reponse.n, "\n" )
 
             if ( all( is.finite( precision ),
-                      ( reponse - as.integer( reponse ) ) == 0 ) ) {
+                      ( reponse.n - as.integer( reponse.n ) ) == 0 ) ) {
                 ## Réponse apparemment entière : pas d'indication sur le nombre de décimales
                 precision <- NA
             }
@@ -572,7 +652,8 @@ convertir_question <- function( question,
                               titre = question[ 1, colonne.titre ],
                               n.decimales = precision,
                               fichier.xml = fichier.xml,
-                              commentaire.global = commentaire.global )
+                              commentaire.global = commentaire.global,
+                              note.question = note.question, penalite = penalite.question )
             return( reponse.n )
         }
 
@@ -588,7 +669,8 @@ convertir_question <- function( question,
                               titre = question[ 1, colonne.titre ],
                               melanger = melanger.reponses,
                               fichier.xml = fichier.xml,
-                              commentaire.global = commentaire.global )
+                              commentaire.global = commentaire.global,
+                              note.question = note.question, penalite = penalite.question )
             return( reponse.l )
         }
 
@@ -599,7 +681,8 @@ convertir_question <- function( question,
                      reponses = reponse,
                      titre = question[ 1, colonne.titre ],
                      fichier.xml = fichier.xml,
-                     commentaire.global = commentaire.global )
+                     commentaire.global = commentaire.global,
+                     note.question = note.question, penalite = penalite.question )
         return( reponse )
     }
 
@@ -673,7 +756,8 @@ convertir_question <- function( question,
                     unique = if ( forcer.multiple ) FALSE else reponse.unique,
                     melanger = melanger.reponses,
                     fichier.xml = fichier.xml,
-                    commentaire.global = commentaire.global )
+                    commentaire.global = commentaire.global,
+                    note.question = note.question, penalite = penalite.question )
 
         return( c( bonnes, mauvaises ) )
     }
@@ -803,7 +887,8 @@ convertir_question <- function( question,
                            texte.final  = texte.final,
                            reponses = reponses, types = types,
                            fichier.xml = fichier.xml,
-                           commentaire.global = commentaire.global )
+                           commentaire.global = commentaire.global,
+                           note.question = note.question, penalite = penalite.question )
     return( "\u00ab cloze \u00bb" )
 }
 
@@ -842,6 +927,16 @@ traiter_images <- function( textes, dossier.images, sep.images, inserer.images )
                                   ## On fait sauter les séparateurs
                                   img <- gsub( masque, '\\1', img )
 
+                                  ## On distingue le nom de fichier et les indications textuelles
+                                  pos.sep <- gregexpr( "[|]", img )[[ 1 ]]
+                                  if ( -1 == pos.sep ) {
+                                      ## Pas d'indication de texte alternatif
+                                      description <- NA
+                                  } else {
+                                      description <- substr( img, pos.sep + 1, nchar( img ) )
+                                      img <- substr( img, 1, pos.sep - 1 )
+                                  }
+
                                   ## On distingue le nom de fichier et les indications de taille
                                   pos.sep <- gregexpr( "[:!]", img )[[ 1 ]]
                                   if ( -1 == pos.sep ) {
@@ -862,8 +957,10 @@ traiter_images <- function( textes, dossier.images, sep.images, inserer.images )
                                   }
                                   
                                   ## On lie l'image
+                                  if ( is.na( description ) ) description <- img
                                   img <- lier_image.moodle( paste0( dossier.images, "/", img ), 
                                                             largeur = largeur, hauteur = hauteur,
+                                                            description = description,
                                                             interne = inserer.images )
 
                                   ## On renvoie ce lien
@@ -973,8 +1070,20 @@ traiter_SMILES <- function( textes, sep.SMILES )
                                   ## On fait sauter les séparateurs
                                   frm <- gsub( masque, '\\1', frm )
 
+                                  ## On distingue le code SMILES et les indications textuelles
+                                  pos.sep <- gregexpr( "[|]", frm )[[ 1 ]]
+                                  if ( -1 == pos.sep ) {
+                                      ## Pas d'indication de texte alternatif
+                                      description <- NA
+                                  } else {
+                                      description <- substr( frm, pos.sep + 1, nchar( frm ) )
+                                      frm <- substr( frm, 1, pos.sep - 1 )
+                                  }
+
                                   ## On créer la formule
-                                  frm <- inserer_SMILES.moodle( frm, marges = FALSE )
+                                  if ( is.na( description ) ) description <- frm
+                                  frm <- inserer_SMILES.moodle( frm, marges = FALSE,
+                                                                nom.molecule = description )
 
                                   ## On renvoie le code pour l'insérer
                                   frm

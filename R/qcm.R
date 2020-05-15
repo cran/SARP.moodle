@@ -15,6 +15,8 @@
 ##                                 on interdit à Moodle de le choisir aléatoirement
 ##
 ##    1 avril   2017 : [Vrai-Faux] on désactive la numérotation des réponses
+##
+##   13 mai     2020 : options globales (note, pénalité)
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -27,7 +29,12 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
                               ordre = c( "aleatoire", NA, "random", "vrai premier", "faux premier" ),
                               melanger = FALSE,
                               fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                              commentaire.global = NA ) {
+                              commentaire.global = NA, penalite = NA, note.question = NA )
+{
+    if( length( texte ) > 1 ) {
+        warning( "Texte de longeur > 1 - Concat\u00e9nation" )
+        texte <- paste0( texte, collapse = "" )
+    }
     ## On détermine l'ordre des réponses
     if ( any( is.null( ordre ), is.character( ordre ) ) ) {
         melanger = FALSE
@@ -57,6 +64,7 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
 
     question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                      titre = titre, texte = texte, reponses = reponses,
+                     penalite = penalite, note = note.question,
                      autres.codes = codes, commentaire.global = commentaire.global  )
 }
 
@@ -69,7 +77,7 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
                         unique = ( length( bonnes.reponses ) == 1 ), melanger = TRUE,
                         titre = "QCM...", numerotation = c( "none", "abc", "ABCD", "123" ),
                         fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                        commentaire.global = NA ) {
+                        commentaire.global = NA, penalite = NA, note.question = NA ) {
   ## On prépare les réponses
   n.bonnes <- length( bonnes.reponses )
   if ( n.bonnes < 1 ) {
@@ -151,6 +159,7 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
   ## On fait la question
   question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                    titre = titre, texte = texte, reponses = reponses,
+                   penalite = penalite, note = note.question,
                    autres.codes = codes, commentaire.global = commentaire.global )
 }
 
@@ -162,7 +171,7 @@ qroc.moodle <- function( texte, reponses, notes = rep( 100, length( reponses ) )
                          commentaires = NULL, casse = TRUE,
                          titre = "QROC...",
                          fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                         commentaire.global = NA ) {
+                         commentaire.global = NA, penalite = NA, note.question = NA ) {
   ## On construit les réponses
   reponses <- paste0( "<![CDATA[", reponses, "]]>" )
   attr( reponses, "fractions" ) <- notes
@@ -176,5 +185,6 @@ qroc.moodle <- function( texte, reponses, notes = rep( 100, length( reponses ) )
   ## On fait la question
   question.moodle( fichier.xml = fichier.xml, type = "shortanswer",
                    titre = titre, texte = texte, reponses = reponses,
+                   penalite = penalite, note = note.question,
                    autres.codes = codes, commentaire.global = commentaire.global )
 }

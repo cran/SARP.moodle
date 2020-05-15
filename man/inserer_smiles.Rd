@@ -8,7 +8,7 @@
   code SMILES en une image prête à insérer dans un texte.
 }
 \usage{
-inserer_SMILES.moodle( code.SMILES, 
+inserer_SMILES.moodle( code.SMILES, nom.molecule = code.SMILES,
                        largeur = 300, hauteur = 300,
                        couleur.atomes = TRUE,
                        couleur.fond = NA,
@@ -23,6 +23,9 @@ inserer_SMILES.moodle( code.SMILES,
 \arguments{
   \item{code.SMILES}{Une chaîne de caractères contenant le code SMILES à
     convertir.  }
+
+  \item{nom.molecule}{Une chaîne de caractère qui sera utilisée comme
+    description de l'image, dans le code HTML produit pour Moodle.  }
 
   \item{largeur, hauteur}{Les dimensions de l'image, en pixels}
 

@@ -12,8 +12,8 @@
   réponse, commentaire...).
 }
 \usage{
-afficher_echantillon.moodle( x, tableau = TRUE,
-                             n.lignes = 1, trier = FALSE )
+afficher_echantillon.moodle( x, tableau = TRUE, trier = FALSE,
+                             marge = c( 10, 10, 1, 1 ), \dots )
 afficher_nombre.moodle( x,
                         dec = get( "decimal", envir = SARP.Moodle.env ),
                         n.chiffres = get( "nombre.chiffres", envir = SARP.Moodle.env ) )
@@ -27,11 +27,17 @@ afficher_nombre.moodle( x,
   \item{tableau}{Si \code{TRUE}, un tableau HTML est construit. Sinon,
     une simple énumération des valeurs est préparée. }
   
-  \item{n.lignes}{Si l'on construit un tableau, combien de lignes
-  doit-il avoir ? \emph{Actuellement ignoré}}
-
   \item{trier}{Si \code{TRUE}, les valeurs de l'échantillon sont triées
-  par ordre croissant avant d'être converties en code HTML. }
+    par ordre croissant avant d'être converties en code HTML. }
+
+  \item{marge}{Les marges à laisser au sein de chaque case du tableau
+    affichant les résultats. Ce doit être un vecteur de quatre valeurs
+    entières, correspondant dans l'ordre aux marges gauche, droite,
+    haute et basse, exprimées en pixels. }
+
+  \item{\dots}{Autres options pour
+    \code{\link{sortie_R.moodle.numeric}}, qui est appelé pour
+    l'affichage sous forme de tableau.}
   
   Options pour \code{afficher_nombre.moodle}
 

@@ -93,6 +93,10 @@ debuter_xml.moodle <- function( fichier.xml,   # Le nom du fichier XML à créer
          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
          if ( TRUE == glossaire ) "<GLOSSARY>\n <INFO>" else "<quiz>" )
 
+    ## On met un commentaire pour identifier l'origine
+    cat( file = f, sep = "",
+         "<!-- Fichier g\u00e9n\u00e9r\u00e9 avec SARP.moodle -->" )
+    
     ## On renvoie le fichier...
     return( f )
 }

@@ -12,9 +12,11 @@
 csv.moodle(fichier.csv,
            colonne.texte = 'Question',
            colonne.reponse = 'R\u00e9ponse',
-           colonne.note = NA, colonne.titre = NA,
+           colonne.note = NA, colonne.note_question = NA,
+           colonne.titre = NA,
            colonne.code = NA, colonne.type = NA,
            colonne.retour = NA, colonne.global = NA,
+           colonne.penalite = NA,
            fichier.xml = if ( TRUE == nv.fichier ) gsub(
                               "\\\\.[Cc][Ss][Vv]$",
                               ".xml", fichier.csv )
@@ -58,6 +60,15 @@ csv.moodle(fichier.csv,
     toujours 0 pour « Faux »: indiquez explicitement un pourcentage
     négatif si nécessaire). 
   }
+  
+  \item{colonne.note_question}{ Le nom ou le numéro de la colonne qui
+    contient la note globale de la question. Si elle n'est pas indiquée,
+    une colonne intitulée « Note question » (insensible à la casse) est
+    cherchée dans le fichier. Cette colonne est facultative. Si elle
+    existe, elle doit contenir un entier strictement positif donnant la
+    note globale de la question, ou rester vide. Toute note non indiquée
+    sera supposée égale à 1 (valeur par défaut de Moodle).}
+  
   \item{colonne.titre}{
     Le nom ou le numéro de la colonne qui contient le titre à donner à
     la question dans Moodle. Si elle est manquante, le titre est
@@ -91,6 +102,19 @@ csv.moodle(fichier.csv,
     Le nom ou le numéro de la colonne qui contient le commentaire à
     afficher globalement pour la question. Cette colonne est facultative.
   }
+    
+  \item{colonne.penalite}{ Le nom ou le numéro de la colonne qui
+    contient la pénalité à mettre en cas de nouvelle tentative de la
+    question. Si elle n'est pas indiquée, une colonne intitulée «
+    Pénalité » (insensible à la casse) est cherchée dans le
+    fichier. Cette colonne est facultative. Si elle existe, elle doit
+    contenir la fraction de la note globale de la
+    question qui sera prise en compte pour noter la nouvelle tentative
+    (par exemple, si la question a une note globale de 2 et la pénalité
+    est de 0,5, à la seconde tentative la note maximale possible sera de
+    1) ou rester vide. Toute pénalité non indiquée sera supposée
+    égale à 1 (pas de pénalité en cas de nouvelle tentative).}
+  
   \item{fichier.xml}{
     Le nom du fichier XML à créer ou un fichier XML déjà créé avec
     \code{\link{debuter_xml.moodle}}. Par
@@ -130,7 +154,7 @@ csv.moodle(fichier.csv,
   }
 
   \item{melanger.reponses}{
-    Si \code{TRUE}, autorise Moodle a permuter aléatoirement l'ordre des
+    Si \code{TRUE}, autorise Moodle à permuter aléatoirement l'ordre des
     réponses lorsqu'il pose la question. Sinon, l'ordre du fichier est
     tout le temps utilisé.
   }
@@ -153,7 +177,7 @@ csv.moodle(fichier.csv,
   
   \item{categorie.base}{
     La catégorie de base à utiliser pour créer les questions. Elle
-    contiendra toute les sous-catégories du fichier, s'il y en a.
+    contiendra toutes les sous-catégories du fichier, s'il y en a.
   }
 
   \item{dossier.images}{ Le dossier d'image où trouver les images à
@@ -282,7 +306,11 @@ csv.moodle(fichier.csv,
   Les fonctions de base de création de questions pour plus de souplesse,
   et en particulier pour créer des questions non gérées par le format de
   fichier ci-dessus.
-  }
+
+  \code{\link{csv_optique.moodle}} pour convertir des fichiers CSV au
+  format utilisé par les lecteurs optiques.
+}
+
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
 }

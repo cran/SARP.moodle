@@ -16,7 +16,7 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
             titre = "QCM...",
             numerotation = c( "none", "abc", "ABCD", "123" ),
             fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-            commentaire.global = NA )
+            commentaire.global = NA, penalite = NA, note.question = NA )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -74,10 +74,11 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
 
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
+
+  \item{commentaire.global, penalite, note.question}{Options communes à
+    toutes les questions Moodle, voyez
+    \code{\link{debut_question.moodle}}.}
   
-  \item{commentaire.global}{ Un vecteur de chaînes de caractère, de longueur
-    1, indiquant le commentaire global à afficher après que l'étudiant a
-    répondu. }
 }
 
 \details{ La question générée avec cette fonction est une question de

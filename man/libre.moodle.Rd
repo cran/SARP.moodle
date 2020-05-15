@@ -14,6 +14,7 @@ question_libre.moodle( texte.intro, textes.avant, texte.final,
                        commentaires = NULL,
                        titre = "Question libre",
                        commentaire.global = NA,
+                       penalite = NA, note.question = NA,
                        fichier.xml = get( "fichier.xml",
                                           envir = SARP.Moodle.env ) )
 }
@@ -55,9 +56,10 @@ question_libre.moodle( texte.intro, textes.avant, texte.final,
 
   \item{titre}{ L'intitulé de la question, en HTML. }
 
-  \item{commentaire.global}{Le commentaire global affiché après avoir
-  répondu à la question. Il n'y en aura pas s'il vaut \code{NA},
-  \code{NULL} ou est manquant.}
+
+  \item{commentaire.global, penalite, note.question}{Options communes à
+    toutes les questions Moodle, voyez
+    \code{\link{debut_question.moodle}}.}
   
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
@@ -75,9 +77,12 @@ Chaque champ réponse est défini par la ou les réponses possibles, son
   le \emph{i}-ème champ réponse.
 
 Le type \code{NUMERICAL} correspond à un champ attendant une réponse
- numérique — c'est l'équivalent d'une question numérique. Une seule
- réponse est possible, qui sera la bonne réponse. Il ne peut donc y
- avoir aussi qu'un seul commentaire.
+ numérique — c'est l'équivalent d'une question numérique. Une ou
+ plusieurs réponses sont possibles, qui seront de bonnes réponses, mais
+ pas forcément donnant toute tous les points. Les réponses sont à
+ fournir sous la forme d'une liste comportant un vecteur des valeurs,
+ nommé \code{Valeur} et un vecteur des tolérances associées, nommé
+ \code{Tolerance}.
 
 Les types \code{MULTICHOICE}, \code{MULTICHOICE_V},
  \code{MULTICHOICE_H}, \code{SHORTANSWER} et \code{SHORTANSWER_C}

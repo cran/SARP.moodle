@@ -1,17 +1,30 @@
 \name{question.moodle}
 \alias{question.moodle}
+\alias{debut_question.moodle}
+\alias{fin_question.moodle}
 \title{
   Créer une question Moodle au format XML
 }
 \description{
-  Cette fonction permet de créer une question pour Moodle au format
+  Ces fonctions permettent de créer une question pour Moodle au format
   XML.}
 \usage{
 question.moodle( type = "cloze",
                  titre = "Question...", texte, reponses = NULL,
                  penalite = NA, note = NA, commentaire.global = NA,
                  autres.codes = NULL,
-                 fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
+                 fichier.xml = get( "fichier.xml",
+                                    envir = SARP.Moodle.env ) )
+
+debut_question.moodle( type,
+                       titre, texte, 
+                       penalite = NA, note = NA, 
+                       commentaire.global = NA,
+                       fichier.xml = get( "fichier.xml",
+                                          envir = SARP.Moodle.env ) )
+
+fin_question.moodle( fichier.xml = get( "fichier.xml",
+                                        envir = SARP.Moodle.env ) )
 }
 \arguments{
   \item{texte}{ Le texte de la question (une chaîne de caractères). Cet
@@ -52,8 +65,8 @@ question.moodle( type = "cloze",
   \item{commentaire.global}{ Un vecteur de chaînes de caractère, de
     longueur 1, correspondant au retour à indiquer globalement (champ
     délimité par les balises \code{<generalfeedback>} et
-    \code{</generalfeedback>} ).  Utilisez \code{NA} pour ne pas
-    indiquer de commentaire. }
+    \code{</generalfeedback>} ).  Utilisez \code{NA} ou \code{NULL} pour
+    ne pas indiquer de commentaire. }
 
   \item{note}{ La note associée à cette question (champ délimité par les
     balises \code{<defaultgrade>} et \code{</defaultgrade>} ). Doit être

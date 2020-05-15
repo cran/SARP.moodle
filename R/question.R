@@ -14,6 +14,11 @@
 ##
 ##   29 janvier 2020 : codage des textes (énoncés, commentaires)
 ##                      => l'inclusion d'images est possible...
+##
+##   28 avril   2020 : fonctions de création de questions partielles
+##                       pour types de questions plus exotiques
+##
+##   29 avril   2020 : bloc générique « q. à réponses multiple » [début]
 ## ─────────────────────────────────────────────────────────────────
 
 question.moodle <- function( type = "cloze",
@@ -22,45 +27,10 @@ question.moodle <- function( type = "cloze",
                              autres.codes = NULL,
                              fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
     ## On démarre la question
-    cat( file = fichier.xml, sep = "",
-         "\n<question type=\"", type, "\">\n" )
-
-    ## A-t-on indiqué un titre pour la question ?
-    if ( length( titre ) > 0 ) {
-        cat( file = fichier.xml, sep = "",
-             " <name format=\"html\">\n",
-             "  <text><![CDATA[", titre, "]]></text>\n",
-             " </name>\n" )
-    }
-
-    ## OBLIGATOIRE : le texte de la question
-    cat( file = fichier.xml, sep = "",
-         " <questiontext format=\"html\">\n" )
-    coder.texte( texte, fichier.xml = fichier.xml )
-    cat( file = fichier.xml, sep = "",
-         " </questiontext>\n" )
-
-    ## On indique le commentaire général fait à la question
-    if ( all( is.na( commentaire.global ) == FALSE,
-              nchar( commentaire.global ) > 0 ) ) {
-        cat( file = fichier.xml, sep = "",
-             " <generalfeedback>\n" )
-        coder.texte( commentaire.global, fichier.xml = fichier.xml )
-        cat( file = fichier.xml, sep = "",
-             " </generalfeedback>\n" )
-    }
-
-    ## On indique une note par défaut
-    if ( is.finite( note ) ) {
-        cat( file = fichier.xml, sep = "",
-             " <defaultgrade>", note, "</defaultgrade>\n" )
-    }
-    
-    ## On indique une pénalité
-    if ( is.finite( penalite ) ) {
-        cat( file = fichier.xml, sep = "",
-             " <penalty>", penalite, "</penalty>\n" )
-    }
+    debut_question.moodle( type = type, titre = titre, texte = texte,
+                           penalite = penalite, note = note,
+                           commentaire.global    = commentaire.global,
+                           fichier.xml = fichier.xml )
 
     ## On a indiqué des réponses...
     n.reponses <- length( reponses )
@@ -137,7 +107,148 @@ question.moodle <- function( type = "cloze",
     }
 
     ## Question finie...
+    fin_question.moodle( fichier.xml = fichier.xml )
+}
+
+## ——————————————————————————————————————————————————————————————————————
+##
+##           Éléments servant à la construction d'une question
+##
+## ——————————————————————————————————————————————————————————————————————
+
+## ——————————————————————————————————————————————————————————————————————
+##
+## Créer le code d'un début de question, avec les champs obligatoires
+##
+## type  = le type de question
+## titre = le titre de la question [facultatif]
+## texte = l'énoncé de la question
+## penalite = la pénalité en cas de 2e tentative (% de la note)
+## note  = note par défaut
+## commentaire.global = le commentaire fait à la fin de question, quoi qu'il arrive
+## 
+debut_question.moodle <- function( type,
+                                   titre, texte, 
+                                   penalite = NA, note = NA, 
+                                   commentaire.global = NA,
+                                   fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
+{
+    ## On démarre la question
+    cat( file = fichier.xml, sep = "",
+         "\n<question type=\"", type, "\">\n" )
+
+    ## A-t-on indiqué un titre pour la question ?
+    if ( length( titre ) > 0 ) {
+        cat( file = fichier.xml, sep = "",
+             " <name format=\"html\">\n",
+             "  <text><![CDATA[", titre, "]]></text>\n",
+             " </name>\n" )
+    }
+
+    ## OBLIGATOIRE : le texte de la question
+    cat( file = fichier.xml, sep = "",
+         " <questiontext format=\"html\">\n" )
+    coder.texte( texte, fichier.xml = fichier.xml )
+    cat( file = fichier.xml, sep = "",
+         " </questiontext>\n" )
+
+    ## On indique le commentaire général fait à la question
+    if ( all( is.na( commentaire.global ) == FALSE,
+              nchar( commentaire.global ) > 0 ) ) {
+        cat( file = fichier.xml, sep = "",
+             " <generalfeedback>\n" )
+        coder.texte( commentaire.global, fichier.xml = fichier.xml )
+        cat( file = fichier.xml, sep = "",
+             " </generalfeedback>\n" )
+    }
+
+    ## On indique une note par défaut
+    if ( is.finite( note ) ) {
+        cat( file = fichier.xml, sep = "",
+             " <defaultgrade>", note, "</defaultgrade>\n" )
+    }
+    
+    ## On indique une pénalité
+    if ( is.finite( penalite ) ) {
+        cat( file = fichier.xml, sep = "",
+             " <penalty>", penalite, "</penalty>\n" )
+    }
+}
+
+## ——————————————————————————————————————————————————————————————————————
+##
+## Créer le code d'un début de question, avec les champs obligatoires
+##
+## ordre.aleatoire : faut-il mélanger l'ordre des réponses ?
+
+bloc.reponse_multiple <- function( ordre.aleatoire,
+                                   commentaire.correct,
+                                   commentaire.partiel,
+                                   commentaire.incorrect,
+                                   montrer.nombre.correct,
+                                   numerotation,
+                                   fichier.xml
+                                  )
+{
+    ## Faut-il tirer au sort l'ordre des réponses ?
+    if ( !missing( ordre.aleatoire ) ) {
+        if ( length( ordre.aleatoire ) > 1 ) {
+            warning( "ordre.aleatoire de longueur > 1 - seul la premi\u00e8re valeur servira" )
+            ordre.aleatoire <- ordre.aleatoire[ 1 ]
+        }
+        if ( is.null( ordre.aleatoire ) ) ordre.aleatoire <- TRUE
+        if ( is.na( ordre.aleatoire ) ) ordre.aleatoire <- TRUE
+        
+        cat( file = fichier.xml, sep = "",
+             "  <shuffleanswers>",
+            if ( ordre.aleatoire ) "true" else "false",
+             "</shuffleanswers>\n" ) 
+    }
+
+    ## Faut-il numéroter ?
+    if ( !missing( numerotation ) ) {
+        if ( length( numerotation ) > 1 ) {
+            warning( "numerotation de longueur > 1 - seul la premi\u00e8re valeur servira" )
+            numerotation <- numerotation[ 1 ]
+        }
+        if ( is.null( numerotation ) ) numerotation <- "none"
+        if ( is.na( numerotation ) ) numerotation <- "none"
+        
+        if ( !( numerotation %in% c( 'ABC', '123', 'abc', 'iii', 'III', 'none' ) ) ) {
+            warning( "Code de num\u00e9rotation inconnu - ", numerotation,
+                     " - ignor\u00e9" )
+            numerotation <- "none"
+        }
+
+        cat( file = fichier.xml, sep = "",
+             "  <answernumbering>",
+             numerotation,
+             "</answernumbering>\n" )        
+    }
+    
+    ## Faut-il indiquer le nombre de réponses correctes ?
+    if ( !missing( montrer.nombre.correct ) ) {
+        if ( length( montrer.nombre.correct ) > 1 ) {
+            warning( "montrer.nombre.correct de longueur > 1 - seul la premi\u00e8re valeur servira" )
+            montrer.nombre.correct <- montrer.nombre.correct[ 1 ]
+        }
+        if ( is.null( montrer.nombre.correct ) ) montrer.nombre.correct <- TRUE
+        if ( is.na( montrer.nombre.correct ) ) montrer.nombre.correct <- TRUE
+
+        if ( montrer.nombre.correct ) {
+            cat( file = fichier.xml, sep = "",
+                 "  <shownumcorrect/>\n" )
+        }
+    }
+}
+
+## ——————————————————————————————————————————————————————————————————————
+##
+## Finir le code d'une question
+##
+fin_question.moodle <- function( fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
+{
+    ## Question finie...
     cat( file = fichier.xml, sep = "\n",
          "</question>" )
 }
-                             

@@ -14,7 +14,7 @@ vrai_faux.moodle( texte,  texte.vrai = "Vrai", texte.faux = "Faux",
                   ordre = c( "aleatoire", NA, "random", "vrai premier", "faux premier" ),
                   melanger = FALSE,
                   fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                  commentaire.global = NA )
+                  commentaire.global = NA, penalite = NA, note.question = NA )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -44,9 +44,10 @@ vrai_faux.moodle( texte,  texte.vrai = "Vrai", texte.faux = "Faux",
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
   
-  \item{commentaire.global}{ Un vecteur de chaînes de caractère, de longueur
-    1, indiquant le commentaire global à afficher après que l'étudiant a
-    répondu. }
+  \item{commentaire.global, penalite, note.question}{Options communes à
+    toutes les questions Moodle, voyez
+    \code{\link{debut_question.moodle}}.}
+  
 }
 \details{ Bien qu'un type particulier de question existe dans Moodle
     pour les questions « vrai ou faux » (type \code{truefalse}), la

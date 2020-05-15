@@ -13,6 +13,8 @@
 ##
 ##   20 avril   2020 : souplesse et contrôles dans les réponses
 ##                       multiples aux questions cloze
+##
+##   11 mai     2020 : souplesse sur le nom Valeur/Valeurs
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -50,6 +52,32 @@ generer_question <- function( note = NA, type, reponses, commentaires ) {
     if ( type == "NUMERICAL" ) {
         if ( length( reponses ) != 1 ) {
             if ( is.list( reponses ) ) {
+                ## On corrige des erreurs de noms fréquentes
+                if ( hasName( reponses, "Valeur" ) ) {
+                    names( reponses )[ which( names( reponses ) == "Valeur" ) ] <- "Valeurs"
+                }
+                if ( hasName( reponses, "Tol\u00e9rances" ) ) {
+                    names( reponses )[ which( names( reponses ) == "Tol\u00e9rances" ) ] <- "Tolerance"
+                }
+                if ( hasName( reponses, "Tolerances" ) ) {
+                    names( reponses )[ which( names( reponses ) == "Tolerances" ) ] <- "Tolerance"
+                }
+                if ( hasName( reponses, "Tol\u00e9rance" ) ) {
+                    names( reponses )[ which( names( reponses ) == "Tol\u00e9rance" ) ] <- "Tolerance"
+                }
+                
+                valeurs <- reponses$Valeurs
+                tolerance <- reponses$Tolerance
+                if ( is.null( tolerance ) ) {
+                    tolerance <- rep( 0, length( valeurs ) )
+                }
+                notes <- reponses$Notes
+                if ( is.null( notes ) ) {
+                    notes <- rep( "100", length( valeurs ) )
+                }
+
+                reponse <- paste0( "%", notes, "%", valeurs, ":", tolerance, "#", commentaires )
+                reponse <- paste0( reponse, collapse = "~" )
             } else {
                 ## Plusieurs variantes de réponses correctes
                 reponse <- paste0( "=", reponses, "#", commentaires )
@@ -124,7 +152,7 @@ generer_question <- function( note = NA, type, reponses, commentaires ) {
 question_libre.moodle <- function( texte.intro, textes.avant, texte.final,
                                    reponses, notes = NULL, types = NULL, commentaires = NULL,
                                    titre = "Question libre",
-                                   commentaire.global = NA,
+                                   commentaire.global = NA, penalite = NA, note.question = NA,
                                    fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
   # Combien de questions au total ?
   n.questions <- length( reponses )
@@ -158,6 +186,7 @@ question_libre.moodle <- function( texte.intro, textes.avant, texte.final,
 
   ## On crée la question
   question.moodle( fichier.xml = fichier.xml, type = "cloze",
-                   titre = titre, texte = texte, reponses = NULL ,
+                   titre = titre, texte = texte, reponses = NULL,
+                   penalite = penalite, note = note.question,
                    commentaire.global = commentaire.global )
 }
