@@ -14,6 +14,11 @@
 coder.texte <- function( texte, ajouter.images = TRUE, proteger.balises = FALSE,
                          balise.CDATA = TRUE,
                          indentation = 2, fichier.xml ) {
+    if ( length( texte ) > 1 ) {
+        stop( "Le texte pass\u00e9 n'est pas unique.",
+              " Probl\u00e8me de codage ant\u00e9rieur !\n",
+              texte )
+    }
     blanc <- paste0( rep( " ", indentation ), collapse = "" )
     ## Le préambule
     cat( file = fichier.xml, sep = "",
@@ -49,6 +54,7 @@ coder.texte <- function( texte, ajouter.images = TRUE, proteger.balises = FALSE,
                        img <- gsub( "\"$", '', img )
 
                        ## On convertit l'image...
+#                       print( texte )
                        cat( file = fichier.xml, sep = "",
                             blanc,
                             coder_image.moodle( img ),

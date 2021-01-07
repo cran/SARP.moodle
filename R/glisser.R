@@ -13,6 +13,18 @@
 ##                  questions « glisser du texte dans un texte »
 ##
 ##   12 mai  2020 : options génériques (note, pénalité) gérées
+##
+##   15 mai  2020 : si une seule indication « infini » pour les textes
+##                   à trou, elle est utilisée pour toutes les étiquettes
+##
+##   30 mai  2020 : les coordonnées hors-image sont ramenées au bord
+##                   (pour le légendage ; à voir si nécessaire pour glisser_deposer)
+##
+##   31 mai  2020 : ajout du temps conseillé pour répondre
+##
+##    1 jan. 2021 : prise en compte de l'identifiant numérique
+##                  gestion des groupes d'étiquettes pour le glisser-déposer sur image
+##                  possibilité d'étiquettes sans zone associée dans le glisser-déposer sur image
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -26,17 +38,26 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
                                     fichier.image,
                                     x.zones, y.zones, txt.zones,
                                     indications = paste0( "Zone ", 1:n.zones ),
-                                    img.zones = NULL, zone.unique = TRUE,
+                                    img.zones = NULL, zone.unique = TRUE, 
+                                    grp.zones = rep( 1, n.zones ),
                                     ordre.aleatoire = TRUE,
                                     commentaire.global = NA, penalite = NA, note.question = NA,
+                                    idnum = NA, temps,
                                     fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
                                     ... )
 {
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
+    
     ## On commence la question
     debut_question.moodle( type = "ddimageortext",
                            titre = titre, texte = texte,
                            penalite = penalite, note = note.question,
                            commentaire.global = commentaire.global,
+                           idnum = idnum,
                            fichier.xml = fichier.xml )
 
     if ( ordre.aleatoire ) {
@@ -51,7 +72,7 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
         png( fichier.image, width = 600, height = 400 )
 
         ## On appelle la fonction pour le dessin
-        ##   Elle doit renvoyer une data.frame $X, $Y, $Textes
+        ##   Elle doit renvoyer une data.frame avec au moins $X, $Y, $Textes
         zones <- f.creer_figure( ... )
 
         ## On convertit les coordonnées en pixels
@@ -74,6 +95,20 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
         if ( length( zones$Images ) > 0 ) {
             img.zones <- zones$Images
         }
+
+        ## On récupère les groupes d'étiquettes, s'il y en a
+        if ( length( zones$Groupes ) > 0 ) {
+            grp.zones <- zones$Groupes
+        } else {
+            grp.zones <- rep( 1, nrow( zones ) )
+        }
+
+        ## On récupère l'unicité de l'étiquette
+        if ( length( zones$Unique ) > 0 ) {
+            zone.unique <- zones$Unique
+        } else {
+            zone.unique <- rep( TRUE, nrow( zones ) )
+        }        
 
         ## On termine l'image
         dev.off()
@@ -112,7 +147,7 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
              "      <no>", i, "</no>\n" )
         coder.texte( txt.zones[ i ], fichier.xml = fichier.xml )
         cat( file = fichier.xml, sep = "",
-             "      <draggroup>1</draggroup>\n" ) # ???
+             "      <draggroup>", grp.zones[ i ], "</draggroup>\n" )
 
         if ( zone.unique[ i ] == FALSE ) {
             ## On peut s'en resservir
@@ -129,15 +164,18 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
         ordre.choix <- sample( ordre.choix, n.zones, replace = FALSE )
     }
     for ( i in 1:n.zones ) {
-        cat( file = fichier.xml, sep = "",
-             "    <drop>\n" )
-        coder.texte( indications[ i ], fichier.xml = fichier.xml )
-        cat( file = fichier.xml, sep = "",
-             "      <no>", ordre.choix[ i ], "</no>\n", # Ordre d'apparition ?
-             "      <choice>", i , "</choice>\n", # Numéro de la zone ?
-             "      <xleft>", x.zones[ i ], "</xleft>\n",
-             "      <ytop>" , y.zones[ i ], "</ytop>\n",
-             "    </drop>\n" )
+        if ( all( is.finite( x.zones[ i ] ),
+                  is.finite( y.zones[ i ] ) ) ) {
+            cat( file = fichier.xml, sep = "",
+                 "    <drop>\n" )
+            coder.texte( indications[ i ], fichier.xml = fichier.xml )
+            cat( file = fichier.xml, sep = "",
+                 "      <no>", ordre.choix[ i ], "</no>\n", # Ordre d'apparition ?
+                 "      <choice>", i , "</choice>\n", # Numéro de la zone ?
+                 "      <xleft>", x.zones[ i ], "</xleft>\n",
+                 "      <ytop>" , y.zones[ i ], "</ytop>\n",
+                "    </drop>\n" )
+        }
     }
     
     ## On a fini la question
@@ -157,14 +195,23 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
                                    zones, marques,
                                    ordre.aleatoire = TRUE, afficher.erreurs = TRUE,
                                    commentaire.global = NA, penalite = NA, note.question = NA,
+                                   idnum = NA,
+                                   temps,
                                    fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                                    ... )
+                                   ... )
 {
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
+    
     ## On commence la question
     debut_question.moodle( type = "ddmarker",
                            titre = titre, texte = texte,
                            penalite = penalite, note = note.question,
                            commentaire.global = commentaire.global,
+                           idnum = idnum,
                            fichier.xml = fichier.xml )
 
     if ( ordre.aleatoire ) {
@@ -195,10 +242,26 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
         zones <- lapply( lst.zones$Zones,
                          function( z ) {
                              z$Type <- tolower( z$Type )
+                             ## print( z$Coord )
                              z$Coord$X <- grconvertX( z$Coord$X,
                                                       from = "user", to = "device" )
                              z$Coord$Y <- grconvertY( z$Coord$Y,
                                                       from = "user", to = "device" )
+
+                             ## On vérifie que l'on ne déborde pas de l'image…
+                             if ( any( z$Coord$X < 0 ) ) {
+                                 z$Coord$X[ which( z$Coord$X < 0 ) ] <- 0
+                             }
+                             if ( any( z$Coord$Y < 0 ) ) {
+                                 z$Coord$Y[ which( z$Coord$Y < 0 ) ] <- 0
+                             }
+                             if ( any( z$Coord$X > 600 ) ) {
+                                 z$Coord$X[ which( z$Coord$X > 600 ) ] <- 600
+                             }
+                             if ( any( z$Coord$Y > 400 ) ) {
+                                 z$Coord$Y[ which( z$Coord$Y > 400 ) ] <- 400
+                             }
+                             ## print( z$Coord )
 
                              ## Rectangle : coin (h,g) + largeur, hauteur
                              if ( z$Type == 'rectangle' ) {
@@ -248,12 +311,12 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
     }
     marques$Nombre <- as.integer( marques$Nombre )
     for ( i in 1:nrow( marques ) ) {
-        marque <- marques[ i, ]
+        ##        marque <- marques[ i, ]
 
         ## Le texte de la marque
         cat( file = fichier.xml, sep = "",
              "    <drag>\n",
-             "      <no>", i, "</no>\n" )
+             "      <no>", i, "</no>\n    " )
             coder.texte( marques$Marque[ i ], fichier.xml = fichier.xml )
 
         multiple <- marques$Nombre[ i ]
@@ -269,14 +332,28 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
     }
     
     ## On crée les zones
+    ## print( marques ) ;
+    ## print( zones )
     for ( i in 1:length( zones ) ) {
         zone <- zones[[ i ]]
 #        print( zone )
         
         ## On repère quelle est la bonne marque
-        if ( is.integer( zone$Marque[ 1 ] ) ) zone$Marque[ 1 ] <- marques[ zone$Marque[ 1 ] ]
-        num.marque <- which( marques == zone$Marque[ 1 ] )
-
+        num.marque <- zone$Marque[ 1 ]
+        if ( is.character( zone$Marque[ 1 ] ) ) {
+            num.marque <- which( marques$Marque == num.marque )
+#            zone$Marque[ 1 ] <- marques$Marque[ zone$Marque[ 1 ] ]
+        }
+        if ( num.marque > nrow( marques ) ) {
+            stop( "Marque voulue : ", num.marque,
+                  " mais seulement ", nrow( marques ), " d\u00e9finies" )
+        }
+        
+  #      num.marque <- which( marques$Marque == zone$Marque[ 1 ] )
+        ## cat( sep = "", "Marque voulue : " , zone$Marque[ 1 ], "\n",
+        ##      "Marque textuelle : ", marques$Marque[ zone$Marque[ 1 ] ], "\n",
+        ##      "Marque trouvée : ", num.marque , "\n" ) 
+        
         ## On crée la zone
         cat( file = fichier.xml, sep = "",
              "    <drop>\n",
@@ -291,6 +368,7 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
         ## Les coordonnées en pixels : entières
         zone$Coord$X <- as.integer( round( zone$Coord$X, 0 ) )
         zone$Coord$Y <- as.integer( round( zone$Coord$Y, 0 ) )
+        ## print( zone$Coord )
         if ( 'Rayon' %in% names( zone$Coord ) )
             zone$Coord$Rayon <- as.integer( round( zone$Coord$Rayon, 0 ) )
         if ( 'Largeur' %in% names( zone$Coord ) )
@@ -331,9 +409,10 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
 ## —————————————————————————————————————————————————————————————————
 
 glisser_textes.moodle <- function( texte, titre = "Glisser les textes...",
-                                   groupe = rep( 1, n.zones ), infini = rep( FALSE, n.zones ),
+                                   groupe = rep( 1, n.zones ), infini = FALSE,
                                    ordre.aleatoire = TRUE, afficher.erreurs = TRUE,
                                    commentaire.global = NA, penalite = NA, note.question = NA,
+                                   idnum = NA, temps,
                                    fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
 {
     ## On prépare l'énoncé et les zones
@@ -358,12 +437,19 @@ glisser_textes.moodle <- function( texte, titre = "Glisser les textes...",
     texte <- paste0( zones, "[[", ordre, "]]", collapse = "" )
     texte <- gsub( "\\[\\[[0-9]\\]\\]$", "", texte )
     ## print( texte )
+
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
     
     ## On commence la question
     debut_question.moodle( type = "ddwtos",
                            titre = titre, texte = texte,
                            penalite = penalite, note = note.question,
                            commentaire.global = commentaire.global,
+                           idnum = idnum,
                            fichier.xml = fichier.xml )
 
     if ( ordre.aleatoire ) {
@@ -375,6 +461,13 @@ glisser_textes.moodle <- function( texte, titre = "Glisser les textes...",
         cat( file = fichier.xml, sep = "",
              "    <showmisplaced/>\n" )
     }    
+
+    if ( length( infini ) == 1 ) {
+        infini <- rep( infini, n.zones )
+    }
+    if ( length( infini ) != n.zones ) {
+        stop( "Pas autant d'indications \"Infini\" que de zones de texte" )
+    }
     
     ## On crée les étiquettes à déplacer
     for ( i in 1:n.zones ) {

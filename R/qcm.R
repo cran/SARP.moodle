@@ -17,6 +17,12 @@
 ##    1 avril   2017 : [Vrai-Faux] on désactive la numérotation des réponses
 ##
 ##   13 mai     2020 : options globales (note, pénalité)
+##
+##   31 mai     2020 : ajout du temps conseillé pour répondre
+##
+##    1 juillet 2020 : si QCU, pas de point négatif par défaut pour les mauvaises réponses
+##
+##    1 janvier 2021 : prise en charge de l'identifiant numérique unique
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -29,12 +35,21 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
                               ordre = c( "aleatoire", NA, "random", "vrai premier", "faux premier" ),
                               melanger = FALSE,
                               fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                              commentaire.global = NA, penalite = NA, note.question = NA )
+                              commentaire.global = NA, penalite = NA, note.question = NA,
+                              idnum = NA,
+                              temps )
 {
     if( length( texte ) > 1 ) {
         warning( "Texte de longeur > 1 - Concat\u00e9nation" )
         texte <- paste0( texte, collapse = "" )
     }
+    
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
+
     ## On détermine l'ordre des réponses
     if ( any( is.null( ordre ), is.character( ordre ) ) ) {
         melanger = FALSE
@@ -65,7 +80,8 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
     question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                      titre = titre, texte = texte, reponses = reponses,
                      penalite = penalite, note = note.question,
-                     autres.codes = codes, commentaire.global = commentaire.global  )
+                     autres.codes = codes, commentaire.global = commentaire.global,
+                     idnum = NA )
 }
 
 ######################################################################
@@ -77,7 +93,9 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
                         unique = ( length( bonnes.reponses ) == 1 ), melanger = TRUE,
                         titre = "QCM...", numerotation = c( "none", "abc", "ABCD", "123" ),
                         fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                        commentaire.global = NA, penalite = NA, note.question = NA ) {
+                        commentaire.global = NA, penalite = NA, note.question = NA, idnum = NA,
+                        temps )
+{
   ## On prépare les réponses
   n.bonnes <- length( bonnes.reponses )
   if ( n.bonnes < 1 ) {
@@ -115,7 +133,11 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
   if ( n.mauvaises > 0 ) {
     n.fractions <- length( fractions$Fausses )
     if ( 0 == n.fractions ) {
-      fractions$Fausses <- - rep( 100 / n.mauvaises, n.mauvaises )
+        if ( unique ) {
+            fractions$Fausses <- rep( 0, n.mauvaises )
+        } else {
+            fractions$Fausses <- - rep( 100 / n.mauvaises, n.mauvaises )
+        }
     } else if ( n.fractions > n.mauvaises ) {
       stop( "Plus de pourcentage de p\u00e9nalit\u00e9 que de mauvaise r\u00e9ponses... " )
     } else {
@@ -156,11 +178,18 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
               "shuffleanswers" = if ( TRUE == melanger ) 1 else 0,
               "answernumbering"= match.arg( numerotation ) )
 
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
+
   ## On fait la question
   question.moodle( fichier.xml = fichier.xml, type = "multichoice",
                    titre = titre, texte = texte, reponses = reponses,
                    penalite = penalite, note = note.question,
-                   autres.codes = codes, commentaire.global = commentaire.global )
+                   autres.codes = codes, commentaire.global = commentaire.global,
+                   idnum = NA )
 }
 
 ######################################################################
@@ -171,20 +200,30 @@ qroc.moodle <- function( texte, reponses, notes = rep( 100, length( reponses ) )
                          commentaires = NULL, casse = TRUE,
                          titre = "QROC...",
                          fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                         commentaire.global = NA, penalite = NA, note.question = NA ) {
-  ## On construit les réponses
-  reponses <- paste0( "<![CDATA[", reponses, "]]>" )
-  attr( reponses, "fractions" ) <- notes
-  if ( length( commentaires ) > 0 ) {
-    attr( reponses, "commentaires" ) <- commentaires
-  }
+                         commentaire.global = NA, penalite = NA, note.question = NA, 
+                         idnum = NA,
+                         temps )
+{
+    ## On construit les réponses
+    reponses <- paste0( "<![CDATA[", reponses, "]]>" )
+    attr( reponses, "fractions" ) <- notes
+    if ( length( commentaires ) > 0 ) {
+        attr( reponses, "commentaires" ) <- commentaires
+    }
 
-  ## Compléments
-  codes <- c( "usecase"         = if ( TRUE == casse ) 1 else 0 )
+    ## Compléments
+    codes <- c( "usecase"         = if ( TRUE == casse ) 1 else 0 )
 
-  ## On fait la question
-  question.moodle( fichier.xml = fichier.xml, type = "shortanswer",
-                   titre = titre, texte = texte, reponses = reponses,
-                   penalite = penalite, note = note.question,
-                   autres.codes = codes, commentaire.global = commentaire.global )
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
+
+    ## On fait la question
+    question.moodle( fichier.xml = fichier.xml, type = "shortanswer",
+                     titre = titre, texte = texte, reponses = reponses,
+                     penalite = penalite, note = note.question,
+                     autres.codes = codes,
+                     commentaire.global = commentaire.global, idnum = idnum )
 }

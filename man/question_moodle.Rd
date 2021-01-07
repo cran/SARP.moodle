@@ -12,6 +12,7 @@
 question.moodle( type = "cloze",
                  titre = "Question...", texte, reponses = NULL,
                  penalite = NA, note = NA, commentaire.global = NA,
+                 idnum = NA,
                  autres.codes = NULL,
                  fichier.xml = get( "fichier.xml",
                                     envir = SARP.Moodle.env ) )
@@ -19,7 +20,7 @@ question.moodle( type = "cloze",
 debut_question.moodle( type,
                        titre, texte, 
                        penalite = NA, note = NA, 
-                       commentaire.global = NA,
+                       commentaire.global = NA, idnum = NA,
                        fichier.xml = get( "fichier.xml",
                                           envir = SARP.Moodle.env ) )
 
@@ -78,6 +79,14 @@ fin_question.moodle( fichier.xml = get( "fichier.xml",
     balises \code{<penalty>} et \code{</penalty>} ). Doit être un
     vecteur numérique avec un seul élément. Utilisez \code{NA} pour ne
     pas indiquer de pénalité. }
+
+  \item{idnum}{ Un entier qui identifie de façon unique la question.
+    L'unicité s'entend au sein de la catégorie à laquelle appartient la
+    question.  SARP.moodle vérifie l'unicité pour la catégorie en cours,
+    mais ne peut évidemment pas vérifier qu'il n'y a pas déjà dans la
+    base des questions avec cet identifiant...  Attention, à chaque
+    appel à \code{\link{categorie.moodle}}, la liste des identifiants
+    est remise à zéro. }
 
   \item{autres.codes}{ Un vecteur de chaînes de caractère, correspondant
     aux valeurs à donner à des champs optionnels de la question. Ils sont

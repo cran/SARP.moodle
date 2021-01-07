@@ -19,17 +19,20 @@
 ##                       pour types de questions plus exotiques
 ##
 ##   29 avril   2020 : bloc générique « q. à réponses multiple » [début]
+##
+##    1 janvier 2021 : tag « idnumber » pris en compte (entier)
 ## ─────────────────────────────────────────────────────────────────
 
 question.moodle <- function( type = "cloze",
                              titre = "Question...", texte, reponses = NULL,
-                             penalite = NA, note = NA, commentaire.global = NA,
+                             penalite = NA, note = NA, commentaire.global = NA, idnum = NA,
                              autres.codes = NULL,
                              fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
     ## On démarre la question
     debut_question.moodle( type = type, titre = titre, texte = texte,
                            penalite = penalite, note = note,
-                           commentaire.global    = commentaire.global,
+                           commentaire.global = commentaire.global,
+                           idnum = idnum,
                            fichier.xml = fichier.xml )
 
     ## On a indiqué des réponses...
@@ -126,11 +129,13 @@ question.moodle <- function( type = "cloze",
 ## penalite = la pénalité en cas de 2e tentative (% de la note)
 ## note  = note par défaut
 ## commentaire.global = le commentaire fait à la fin de question, quoi qu'il arrive
+## idnum = identifiant numérique Moodle
 ## 
 debut_question.moodle <- function( type,
                                    titre, texte, 
                                    penalite = NA, note = NA, 
                                    commentaire.global = NA,
+                                   idnum = NA,
                                    fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
 {
     ## On démarre la question
@@ -172,6 +177,24 @@ debut_question.moodle <- function( type,
     if ( is.finite( penalite ) ) {
         cat( file = fichier.xml, sep = "",
              " <penalty>", penalite, "</penalty>\n" )
+    }
+    
+    ## On indique un identifiant unique [par catégorie]
+    if ( is.finite( idnum ) ) {
+        idnum <- as.integer( idnum )
+
+        ## On vérifie qu'il n'existe pas déjà dans la catégorie...
+        lst <- get( "liste.ids", envir = SARP.Moodle.env )
+        if( idnum %in% lst ) {
+            stop( "Identifiant num\u00e9rique [", idnum,
+                  "] d\u00e9j\u00e0 attribu\u00e9",
+                  " dans la cat\u00e9gorie en cours." )
+        }
+        lst <- c( lst, idnum )
+        assign( "liste.ids", lst, envir = SARP.Moodle.env )
+
+        cat( file = fichier.xml, sep = "",
+             " <idnumber>", idnum, "</idnumber>\n" )
     }
 }
 

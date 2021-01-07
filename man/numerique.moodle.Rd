@@ -14,10 +14,12 @@ numerique.moodle( texte, bonne.reponse, notes = 100,
                   n.significatifs = NA,
                   titre = "Question num&eacute;rique...",
                   commentaire.global = NA, penalite = NA, note.question = NA,
+                  idnum = NA,
                   tolerance.type = 2, tolerance = "auto",
                   unites = NULL, unite.avant = FALSE,
                   unite.penalite = 0.1, unite.visible = FALSE,
                   commentaires = NULL, couleur.consigne = "Orange",
+                  temps,
                   fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
 }
 \arguments{
@@ -48,8 +50,8 @@ numerique.moodle( texte, bonne.reponse, notes = 100,
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
 
-  \item{commentaire.global, penalite, note.question}{Options communes à
-    toutes les questions Moodle, voyez
+  \item{commentaire.global, penalite, note.question, idnum}{Options
+    communes à toutes les questions Moodle, voyez
     \code{\link{debut_question.moodle}}.}
 
   \item{tolerance.type}{La façon dont est exprimée la tolérance. Les
@@ -88,6 +90,8 @@ numerique.moodle( texte, bonne.reponse, notes = 100,
   de la consigne générée, lorsque l'on précise l'arrondi. Doit être une
   chaîne de caractères décrivant une couleur reconnaissable en CSS.}
 
+  \item{temps}{ Le temps conseillé pour répondre à la question, en
+    minutes. }
 }
 
 \details{ En l'absence de tolérance, la bonne réponse doit être donnée

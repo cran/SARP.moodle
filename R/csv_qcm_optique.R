@@ -7,6 +7,8 @@
 ## ─────────────────────────────────────────────────────────────────
 ## Historique
 ##   27 avril 2020 : création du fichier
+##
+##   10 déc.  2020 : corrigé l'oubli de l'option  « quote = »
 ## ─────────────────────────────────────────────────────────────────
 
 csv_optique.moodle <- function( fichier.csv,
@@ -27,7 +29,7 @@ csv_optique.moodle <- function( fichier.csv,
     ##   [On ne peut pas utiliser « missing » pour les colonnes avec une valeur par défaut :
     ##                                        renvoie « TRUE » si non-spécifié sur la ligne de commande...]
     if ( all( FALSE == is.character( fichier.xml ),
-              FALSE == ( "file" %in% ( fichier.xml ) ) ) ) {
+              FALSE == ( "file" %in% class( fichier.xml ) ) ) ) {
         stop( "Le fichier XML doit \u00eatre un nom de fichier \u00e0 cr\u00e9er",
               " ou un fichier d\u00e9j\u00e0 ouvert par debuter_xml.moodle" )
     }
@@ -141,7 +143,7 @@ csv.qcm_optique_vers_XML <- function( fichier.csv, fichier.xml,
 
     ## On charge le fichier
     d <- read.table( fichier.csv,
-                     sep = sep, header = header,
+                     sep = sep, header = header, quote = quote,
                      stringsAsFactors = FALSE, ... )
     cat( "\n Nombre de questions d\u00e9tect\u00e9 : ",
          ncol( d ) - 1 )

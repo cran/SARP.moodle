@@ -40,6 +40,16 @@
 ##
 ##  12 mai     2020 : possibilité de donner une note à la question [1 par défaut]
 ##                    possibilité de donner une pénalité à la question [aucune par défaut]
+##
+##   4 juin    2020 : dossier par défaut pour les images = celui du fichier
+##
+##  24 juin    2020 : préparation des textes des questions & réponses
+##                     (suppression des blancs indus — sur une idée de Virginie)
+##
+##   1 juillet 2020 : si QCU demandé, on ne met pas de points négatif aux mauvaises réponses
+##
+##  31 octobre 2020 : corrigé une erreur qui bloquait l'utilisation de csv.moodle
+##                     pour un fichier XML déjà existant...
 ## ——————————————————————————————————————————————————————————————————————
 
 ## La seule fonction visible de l'extérieur...
@@ -100,7 +110,8 @@ csv.moodle <- function( fichier.csv,
                         forcer.multiple = TRUE, melanger.reponses = TRUE, somme.nulle = FALSE,
                         precision = 3,
                         categorie.base = "",
-                        dossier.images = ".", sep.images = c( '@@', '@@' ), inserer.images = TRUE,
+                        dossier.images = dirname( fichier.csv ),
+                        sep.images = c( '@@', '@@' ), inserer.images = TRUE,
                         sep.formules = c( '@\\$', '\\$@' ),
                         sep.SMILES = c( '@\\{', '\\}@' ),
                         sep = ";", header = TRUE, quote = '"', 
@@ -109,7 +120,7 @@ csv.moodle <- function( fichier.csv,
     ##   [On ne peut pas utiliser « missing » pour les colonnes avec une valeur par défaut :
     ##                                        renvoie « TRUE » si non-spécifié sur la ligne de commande...]
     if ( all( FALSE == is.character( fichier.xml ),
-              FALSE == ( "file" %in% ( fichier.xml ) ) ) ) {
+              FALSE == ( "file" %in% class( fichier.xml ) ) ) ) {
         stop( "Le fichier XML doit \u00eatre un nom de fichier \u00e0 cr\u00e9er",
               " ou un fichier d\u00e9j\u00e0 ouvert par debuter_xml.moodle" )
     }
@@ -471,6 +482,10 @@ csv_vers_moodle <- function( fichier.csv,
     ## Étape de conversions éventuelles finie
     cat( "\n" )
 
+    ## On adapte la mise en forme des textes
+    d[ , colonne.texte   ] <- preparer_texte( d[ , colonne.texte   ] )
+    d[ , colonne.reponse ] <- preparer_texte( d[ , colonne.reponse ] )
+
     ## On travaille par question…
     for( q in codes ) {
         cat( " Conversion de la question ", q, "\n" )
@@ -740,8 +755,10 @@ convertir_question <- function( question,
         }
 
         ## Veut-on un QCM à somme nulle (ie, si l'étudiant coche tout, il a 0)
+        ##   (attention à ne pas le faire pour un QCU)
         if ( all( TRUE == somme.nulle,
-                  length( mauvaises ) > 0 ) ) {
+                  length( mauvaises ) > 0,
+                  forcer.multiple | !reponse.unique ) ) {
             ## Oui => on met des points négatifs aux mauvaises réponses en fonction
             question[ mauvaises, colonne.note ] <- - 100 / length( mauvaises )
         }

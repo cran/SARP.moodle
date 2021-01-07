@@ -9,6 +9,14 @@
 ##
 ##   30 avr. 2020 : version avec enjolivement
 ##                   (vecteurs numériques)
+##
+##   23 mai  2020 : hauteur minimale pour les tableaux,
+##                    pour que le tableau s'affiche sous Mac OS X
+##
+##   12 dec. 2020 : avancé l'affichage des tableaux [table]
+##                  encadrement : possibilité de centrer
+##
+##   13 dec. 2020 : affichage des tableaux 2D contrôlé (mais améliorable)
 ## —————————————————————————————————————————————————————————————————
 
 sortie_R.moodle <- function( objet.R, ... ) {
@@ -17,7 +25,7 @@ sortie_R.moodle <- function( objet.R, ... ) {
 
 encadrer <- function( texte, commande = NULL, cadre = TRUE, courrier = cadre,
                       couleur.commande = "Blue", prompt = "&gt;",
-                      couleur.cadre = "Black", largeur.cadre = 2 )
+                      couleur.cadre = "Black", largeur.cadre = 2, centrer = FALSE )
 { 
     ## On commence la section spéciale
     chaine <- "<div style=\""
@@ -34,6 +42,12 @@ encadrer <- function( texte, commande = NULL, cadre = TRUE, courrier = cadre,
         chaine <- paste0( chaine,
                           " font-family: monospace;" )
     }
+
+    ## Veut-on centrer le cadre ?
+    if ( centrer ) {
+        chaine <- paste0( chaine,
+                          " align: center;" )
+    }       
 
     ## On a fini le style
     chaine <- paste0( chaine, "\">\n" )
@@ -205,7 +219,7 @@ sortie_R.moodle.htest <- function( objet.R, precision = 4, ... )
 
 
 ##
-## Conversion pour un vecteur numérique [classe numeric]
+## Conversion pour un tableau [classe table]
 ##
 ##  enjoliver     : si TRUE, on fait un joli tableau
 ##  couleur.trait : la couleur à utiliser pour les traits du tableau
@@ -250,6 +264,106 @@ sortie_R.moodle.table <- function( objet.R, precision = 4,
                       "<table noborder style=\"", style.table, "\">" )
 
     if ( n.dimensions == 1 ) {
+        ## Les noms des colonnes, s'il y en a
+        noms <- names( objet.R )
+        if ( length( noms ) > 0 ) {
+        }
+        chaine <- paste0( chaine, " <tr style=\"", style.ligne, "\">",
+                          "<!LT>",      # Début de ligne des titres — si retravail ensuite
+                          paste0( "  <th style=\"", style.noms, "\">",
+                                  noms,
+                                  "</th>", collapse = "" ),
+                          chaine )
+
+        ## Les valeurs
+        n <- length( table )
+        chaine <- paste0( chaine, " <tr style=\"", style.ligne, "\">",
+                          paste0( "  <td style=\"", style.contenu, "\">",
+                                  "<!L1C", 1:n, ">", # Début de case — si retravail ensuite
+                                  unlist( lapply( objet.R, afficher_nombre.moodle ) ),
+                                  "</td>", collapse = "" ),
+                          "</tr>" )
+    } else if ( n.dimensions == 2 ) {
+        n.colonnes <- ncol( objet.R ) ; n.lignes <- nrow( objet.R )
+        noms <- names( dimnames( objet.R ) )
+        if ( is.null( noms ) ) noms <- c( '', '' )
+        noms.colonnes <- colnames( objet.R )
+        noms.lignes <- rownames( objet.R )
+
+        ## Y a-t-il des noms de lignes ?
+        avec.lignes <- any( nchar( noms[ 1 ] ) > 0,
+                            length( noms.lignes ) > 0 )
+        
+        ## Y a-t-il des noms de colonnes ?
+        if ( any( nchar( noms[ 2 ] ) > 0, # Un titre global pour les colonnes
+                 length( noms.colonnes ) > 0 ) ) {
+            chaine <- paste0( chaine, "<tr>" )
+            
+            if ( avec.lignes ) {
+                ## La case fantôme en haut, à gauche
+                chaine <- paste0( chaine,
+                                  "<td colspan=",
+                                  ( nchar( noms[ 1 ] ) > 0 ) + ( length( noms.lignes ) > 0 ),
+                                  " rowspan=",
+                                  ( nchar( noms[ 2 ] ) > 0 ) + ( length( noms.colonnes ) > 0 ),
+                                  "></td>" )
+            }
+            if ( nchar( noms[ 2 ] ) > 0 ) {
+                ## Le titre global des colonnes
+                chaine <- paste0( chaine,
+                                  "<th style=\"", style.noms, "\"",
+                                  " colspan=", n.colonnes, ">",
+                                  noms[ 2 ], "</th>",
+                                  if ( length( noms.colonnes ) > 0 ) "</tr><tr>" )
+            }
+            if ( length( noms.colonnes ) > 0 ) {
+                chaine <- paste0( chaine,
+                                  paste0( "<th style=\"", style.noms, "\">",
+                                          noms.colonnes,
+                                          "</th>", collapse = "" ) )
+            }
+            
+            chaine <- paste0( chaine, "</tr>" )
+        }
+
+        ## On fait les lignes
+        for ( i in 1:n.lignes ) {
+            chaine <- paste0( chaine, "<tr",
+                              if ( i == 1 ) paste0( " style=\"", style.ligne, "\"" ),
+                              ">",
+                              "<!L", i, ">" )
+
+            ## Le nom global, s'il existe
+            if ( ( i == 1 ) && ( nchar( noms[ 1 ] ) > 0 ) ) {
+                chaine <- paste0( chaine,
+                                  "<th style=\"", style.noms,
+                                  " vertical-align: middle;\"",
+                                  " rowspan=", n.lignes, ">",
+                                  noms[ 1 ], "</th>" )
+            }
+
+            ## Le nom de la ligne, s'il existe
+            if ( length( noms.lignes ) > 0 ) {
+                chaine <- paste0( chaine,
+                                  "<th style=\"", style.noms, "\">",
+                                  noms.lignes[ i ], "</th>" )
+            }
+
+            ## Le contenu de la ligne
+            chaine <- paste0( chaine,
+                              paste0( "<td style=\"", style.contenu, "\">",
+                                      "<!L", i, "C", 1:n.colonnes, ">",
+                                      unlist( lapply( objet.R[ i, ],
+                                                      afficher_nombre.moodle ) ),
+                                      "<!FL", i, "C", 1:n.colonnes, ">",
+                                      "</td>",
+                                      collapse = "" ) )
+
+            ## Ligne terminée...
+            chaine <- paste0( chaine,
+                              "<!FL", i, ">",
+                              "</tr>" )
+        }
     }
     
     ## Table finie
@@ -313,7 +427,9 @@ sortie_R.moodle.numeric <- function( objet.R, precision = 4,
     }
 
     ## Le début de la table
-    chaine <- paste0( "<div style=\"overflow-x:auto;\">",
+    ##   [avec défileur : propriété overflow-x:auto;
+    ##    et hauteur minimale sinon il ne s'affiche pas sur Mac OS]
+    chaine <- paste0( "<div style=\"overflow-x: auto; min-height: 30px;\">",
                       "<table noborder style=\"", style.table, "\">" )
 
     ## Les titres (s'il y a des noms)

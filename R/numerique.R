@@ -10,6 +10,10 @@
 ##    2 mai     2020 : paramétrage possible de la tolérance
 ##                     tolérance automatique de ±1,1 sur la décimale demandée
 ##                     préparation pour les unités
+##
+##   31 mai     2020 : ajout du temps conseillé pour répondre
+##
+##    1 janvier 2021 : prise en compte de l'identifiant numérique
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -34,10 +38,11 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
                               n.decimales = get( "nombre.chiffres", envir = SARP.Moodle.env ),
                               n.significatifs = NA,
                               titre = "Question num&eacute;rique...",
-                              commentaire.global = NA, penalite = NA, note.question = NA,
+                              commentaire.global = NA, penalite = NA, note.question = NA, idnum = NA,
                               tolerance.type = 2, tolerance = "auto",
                               unites = NULL, unite.avant = FALSE, unite.penalite = 0.1, unite.visible = FALSE,
                               commentaires = NULL, couleur.consigne = "Orange",
+                              temps,
                               fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
 {
     ## Les contrôles initiaux
@@ -124,6 +129,12 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
                          "<i style=\"color: ", couleur.consigne, ";\">",
                          texte.consigne, ".</i>" )
     }
+
+    ## On ajoute l'indication de temps éventuelle
+    if ( !missing( temps ) ) {
+        texte <- paste0( texte, 
+                         temps_necessaire.moodle( temps ) )
+    }
     
     if ( missing( commentaire.global ) ) commentaire.global <- NA
 
@@ -133,6 +144,7 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
                            titre = titre, texte = texte,
                            penalite = penalite, note = note.question,
                            commentaire.global = commentaire.global,
+                           idnum = idnum,
                            fichier.xml = fichier.xml )
     
     reponse <- as.character( bonne.reponse )
@@ -209,9 +221,4 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
     
     ## On a fini la question
     fin_question.moodle( fichier.xml = fichier.xml )
-    
-    ## On crée la question
-    ## question.moodle( fichier.xml = fichier.xml, type = "numerical",
-    ##                  titre = titre, texte = texte, reponses = reponse,
-    ##                  commentaire.global = commentaire.global )
 }

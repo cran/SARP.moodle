@@ -80,6 +80,7 @@ coder_image.moodle <- function( nom.image,
     ## On vérifie que ce n'est pas déjà dans la liste
     ##   (on utilise le nom court, car c'est celui qui sera dans le lien...)
     lst.img <- get( "liste.images", SARP.Moodle.env )
+#    print( lst.img ) ; cat( "\n" )
     if ( nom.court %in% lst.img ) {
         warning( "Image interne ", nom.court, " d\u00e9j\u00e0 cr\u00e9\u00e9..." )
         return( "" )

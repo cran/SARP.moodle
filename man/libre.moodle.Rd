@@ -14,7 +14,8 @@ question_libre.moodle( texte.intro, textes.avant, texte.final,
                        commentaires = NULL,
                        titre = "Question libre",
                        commentaire.global = NA,
-                       penalite = NA, note.question = NA,
+                       penalite = NA, note.question = NA, idnum = NA,
+                       temps,
                        fichier.xml = get( "fichier.xml",
                                           envir = SARP.Moodle.env ) )
 }
@@ -56,10 +57,12 @@ question_libre.moodle( texte.intro, textes.avant, texte.final,
 
   \item{titre}{ L'intitulé de la question, en HTML. }
 
-
-  \item{commentaire.global, penalite, note.question}{Options communes à
-    toutes les questions Moodle, voyez
+  \item{commentaire.global, penalite, note.question, idnum}{Options
+    communes à toutes les questions Moodle, voyez
     \code{\link{debut_question.moodle}}.}
+
+  \item{temps}{ Le temps conseillé pour répondre à la question, en
+    minutes. }
   
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }

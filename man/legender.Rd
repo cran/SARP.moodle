@@ -16,8 +16,11 @@ legender_image.moodle( texte, titre = "L\u00e9gender...",
                        fichier.image,
                        zones, marques,
                        ordre.aleatoire = TRUE, afficher.erreurs = TRUE,
-                       commentaire.global = NA, penalite = NA, note.question = NA,
-                       fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
+                       commentaire.global = NA, penalite = NA,
+                       note.question = NA, idnum = NA,
+                       temps,
+                       fichier.xml = get( "fichier.xml",
+                                           envir = SARP.Moodle.env ),
                        \dots )
 }
 \arguments{
@@ -49,9 +52,12 @@ legender_image.moodle( texte, titre = "L\u00e9gender...",
   \item{afficher.erreurs}{Si \code{TRUE}, en cas de réponse incorrecte à
     la question, les réponses erronées sont identifiées.}
   
-  \item{commentaire.global, penalite, note.question}{Options communes à
-    toutes les questions Moodle, voyez
+  \item{commentaire.global, penalite, note.question, idnum}{Options
+    communes à toutes les questions Moodle, voyez
     \code{\link{debut_question.moodle}}.}
+
+  \item{temps}{ Le temps conseillé pour répondre à la question, en
+    minutes. }
 
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }

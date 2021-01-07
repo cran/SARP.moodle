@@ -11,5 +11,9 @@ importFrom("grDevices", "dev.off", "png")
 importFrom("graphics", "grconvertX", "grconvertY")
 
 ## Les méthodes...
+S3method( sortie_R.moodle, default  )
+
 S3method( sortie_R.moodle, call  )
 S3method( sortie_R.moodle, htest )
+S3method( sortie_R.moodle, numeric )
+S3method( sortie_R.moodle, table )

@@ -16,6 +16,8 @@
 ##   24 mars    2020 : liste des images internes créées, pour éviter les doublons…
 ##
 ##   19 avril   2020 : dossier local d'image paramétrable
+##
+##    1 janvier 2021 : liste des identifiants numériques de questions
 ## ─────────────────────────────────────────────────────────────────
 
 # L'environnement local
@@ -39,6 +41,8 @@ assign( "dossier.images", "." , envir = SARP.Moodle.env ) # Le dossier local con
 
 assign( "styles", list( "erreur" = "color: Red; font-weight: bold;" ),
         envir = SARP.Moodle.env ) # Les styles par défaut pour divers éléments fréquents...
+
+assign( "liste.ids", integer(), envir = SARP.Moodle.env ) # La liste des identifiants de questions
 
 ######################################################################
 #                Initialisation des exports XML                      #

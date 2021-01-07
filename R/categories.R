@@ -7,6 +7,8 @@
 ## Historique
 ##   22 juillet 2016 : supprime les / terminaux
 ##                     corrigé le remplacement des $…
+##
+##    1 janvier 2021 : on maintient une liste d'identifiants numériques
 ## ─────────────────────────────────────────────────────────────────
 
 categorie.moodle <- function( nom.categorie, autoriser.dollar = FALSE,
@@ -29,4 +31,7 @@ categorie.moodle <- function( nom.categorie, autoriser.dollar = FALSE,
          "    <text><![CDATA[$course$/", nom.categorie, "]]></text>\n",
          "  </category>\n",
          "</question>\n" )
+
+    ## On remet à 0 la liste des identifiants
+    assign( "liste.ids", integer(), envir = SARP.Moodle.env )
 }

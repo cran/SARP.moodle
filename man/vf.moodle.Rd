@@ -14,7 +14,8 @@ vrai_faux.moodle( texte,  texte.vrai = "Vrai", texte.faux = "Faux",
                   ordre = c( "aleatoire", NA, "random", "vrai premier", "faux premier" ),
                   melanger = FALSE,
                   fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-                  commentaire.global = NA, penalite = NA, note.question = NA )
+                  commentaire.global = NA, penalite = NA,
+                  note.question = NA, idnum = NA, temps )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -44,10 +45,12 @@ vrai_faux.moodle( texte,  texte.vrai = "Vrai", texte.faux = "Faux",
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
   
-  \item{commentaire.global, penalite, note.question}{Options communes à
-    toutes les questions Moodle, voyez
+  \item{commentaire.global, penalite, note.question, idnum}{Options
+    communes à toutes les questions Moodle, voyez
     \code{\link{debut_question.moodle}}.}
   
+  \item{temps}{ Le temps conseillé pour répondre à la question, en
+    minutes. }
 }
 \details{ Bien qu'un type particulier de question existe dans Moodle
     pour les questions « vrai ou faux » (type \code{truefalse}), la

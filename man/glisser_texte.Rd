@@ -12,10 +12,11 @@
 \usage{
 glisser_textes.moodle( texte, titre = "Glisser les textes...",
                        groupe = rep( 1, n.zones ),
-                       infini = rep( FALSE, n.zones ),
+                       infini = FALSE,
                        ordre.aleatoire = TRUE, afficher.erreurs = TRUE,
                        commentaire.global = NA, 
-                       penalite = NA, note.question = NA,
+                       penalite = NA, note.question = NA, idnum = NA,
+                       temps,
                        fichier.xml = get( "fichier.xml",
                                           envir = SARP.Moodle.env ) )
 }
@@ -35,7 +36,9 @@ glisser_textes.moodle( texte, titre = "Glisser les textes...",
   \item{infini}{ Pour chaque élément à replacer, indique s'il peut être
     réutilisé (\code{TRUE}) ou s'il disparaît des éléments une fois
     placé quelque part (\code{FALSE}). L'ordre est l'ordre d'apparition
-    dans le texte.}
+    dans le texte. Si une seule valeur est indiquée, elle sera utilisée
+    pour tous les éléments. Sinon, il faut indiquer autant de valeurs
+    que d'éléments. }
 
   \item{ordre.aleatoire}{ Les éléments sont par défaut proposés dans
     l'ordre de leur numéro. Ce numéro est ici imposé à l'ordre
@@ -45,9 +48,12 @@ glisser_textes.moodle( texte, titre = "Glisser les textes...",
   \item{afficher.erreurs}{ Si \code{TRUE}, en cas de réponse incorrecte
     à la question, les réponses erronées sont identifiées.}
   
-  \item{commentaire.global, penalite, note.question}{Options communes à
-    toutes les questions Moodle, voyez
+  \item{commentaire.global, penalite, note.question, idnum}{Options
+    communes à toutes les questions Moodle, voyez
     \code{\link{debut_question.moodle}}.}
+
+  \item{temps}{ Le temps conseillé pour répondre à la question, en
+    minutes. }
 
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }

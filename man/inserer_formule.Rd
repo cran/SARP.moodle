@@ -8,7 +8,8 @@
   Latex en image prête à insérer dans un texte.
 }
 \usage{
-inserer_formule.moodle( formule, marge = 2, displaystyle = TRUE,
+inserer_formule.moodle( formule, filtre.Moodle = FALSE,
+                        displaystyle = TRUE, marge = 2, 
                         couleurs = TRUE, enjoliver = TRUE,
                         cmd.latex = "latex -shell-escape --interaction errorstopmode",
                         packages = c( "amsfonts", "amsmath",
@@ -22,10 +23,19 @@ inserer_formule.moodle( formule, marge = 2, displaystyle = TRUE,
     mathématique à convertir, au format latex (sans les délimiteurs).
   }
 
-  \item{marge}{La marge à laisser autour de la formule (en points).}
+  \item{filtre.Moodle}{Si \code{TRUE}, la formule est entourée des
+    marqueurs permettant à Moodle de faire la conversion, en utilisant
+    son filtre (qui va dépendre de la configuration faite sur le
+    serveur).  Cela a l'avantage de faire une base plus légère (pas
+    d'image...) et un affichage plus harmonieux, mais aussi plus lent et
+    avec moins de souplesse, puisque les bibliothèques disponibles sont
+    fonction de l'installation faite. Sinon, elle est convertie en image
+    localement avec latex et l'image est insérée dans le fichier XML.}
 
   \item{displaystyle}{Si \code{TRUE}, la commande latex
     \code{\\displaystyle} est ajoutée en début de formule.}
+
+  \item{marge}{La marge à laisser autour de la formule (en points).}
 
   \item{couleurs}{Si \code{TRUE}, le package \dQuote{xcolor} est inclus
     et les noms de couleurs usuels sont utilisables.}

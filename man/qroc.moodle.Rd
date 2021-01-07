@@ -14,7 +14,9 @@ qroc.moodle( texte, reponses, notes = rep( 100, length( reponses ) ),
              commentaires = NULL, casse = TRUE,
              titre = "QROC...",
              fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
-             commentaire.global = NA, penalite = NA, note.question = NA )
+             commentaire.global = NA, penalite = NA, note.question = NA,
+             idnum = NA,
+             temps )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -42,9 +44,12 @@ qroc.moodle( texte, reponses, notes = rep( 100, length( reponses ) ),
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
 
-  \item{commentaire.global, penalite, note.question}{Options communes à
-    toutes les questions Moodle, voyez
+  \item{commentaire.global, penalite, note.question, idnum}{Options
+    communes à toutes les questions Moodle, voyez
     \code{\link{debut_question.moodle}}.}
+
+  \item{temps}{ Le temps conseillé pour répondre à la question, en
+    minutes. }
 }
 \details{ 
 Cette fonction est une interface simplifiée, et enrichie, pour la

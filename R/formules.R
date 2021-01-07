@@ -13,6 +13,9 @@
 ##
 ##   30 avr. 2020 : pour SMILES, possibilité d'indiquer un nom de molécule
 ##                    qui servira comme description de l'image
+##
+##   20 mai  2020 : pour latex, possibilité de le faire via le filtre Moodle
+##                    plutôt que par une image
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -21,13 +24,54 @@
 ## 
 ## —————————————————————————————————————————————————————————————————
 
-inserer_formule.moodle <- function( formule, marge = 2, displaystyle = TRUE,
+inserer_formule.moodle <- function( formule, filtre.Moodle = FALSE, displaystyle = TRUE,
+                                    marge = 2,
                                     couleurs = TRUE, enjoliver = TRUE,
                                     cmd.latex = "latex -shell-escape --interaction errorstopmode",
                                     packages = c( "amsfonts", "amsmath",
                                                   "amssymb" , "dsfont" ),
                                     options.convert = list( 'density' = 150,
-                                                            'outext'  = ".png" ) )
+                                                            'outext'  = ".png" )
+                                   )
+{
+    
+    ## Veut-on enjoliver ?
+    if ( enjoliver ) {
+        ## On protège la virgule « séparateur décimal »
+        formule <- gsub( "([0-9]),([0-9])", 
+                         "\\1{,}\\2", formule )
+
+        ## On remplace les symboles d'inégalité par plus joli
+        formule <- gsub( "\\leq([^A-Za-z])", "\\leqslant\\1", formule )
+        formule <- gsub( "\\geq([^A-Za-z])", "\\geqslant\\1", formule )
+    }
+    
+    if ( FALSE == filtre.Moodle ) {
+        return( formule.LaTex( formule = formule, marge = marge, displaystyle = displaystyle,
+                               couleurs = couleurs, enjoliver = enjoliver,
+                               cmd.latex = cmd.latex, packages = packages,
+                               options.convert = options.convert ) )
+    }
+
+    ## Mes commandes personnelles : \dd pour l'élément différentiel
+    formule <- gsub( "\\dd", "{\\rm d}", fixed = TRUE, formule )
+
+    ## Si l'on utilise le filtre interne, il suffit d'encadrer
+    ##  par \(\) [« inline »] ou $$ $$ [« display »]
+    code.XML <- paste0( if ( displaystyle ) "$$" else "\\(",
+                        formule,
+                        if ( displaystyle ) "$$" else "\\)" )
+
+    ## On renvoie...
+    code.XML
+}
+
+## —————————————————————————————————————————————————————————————————
+##
+## Version avec un latex externe
+## 
+formule.LaTex <- function( formule, marge, displaystyle, couleurs, enjoliver,
+                           cmd.latex, packages, options.convert )
 {
     ## Le dossier temporaire
     dossier <- tempdir()
@@ -83,15 +127,15 @@ inserer_formule.moodle <- function( formule, marge = 2, displaystyle = TRUE,
     cat( file = fichier, sep = "", "\n",
          "\\begin{document}\n" )
 
-    if ( TRUE == enjoliver ) {
-        ## On protège la virgule « séparateur décimal »
-        formule <- gsub( "([0-9]),([0-9])", 
-                         "\\1{,}\\2", formule )
+    ## if ( TRUE == enjoliver ) {
+    ##     ## On protège la virgule « séparateur décimal »
+    ##     formule <- gsub( "([0-9]),([0-9])", 
+    ##                      "\\1{,}\\2", formule )
 
-        ## On remplace les symboles d'inégalité par plus joli
-        formule <- gsub( "\\leq([^A-Za-z])", "\\leqslant\\1", formule )
-        formule <- gsub( "\\geq([^A-Za-z])", "\\geqslant\\1", formule )
-    }
+    ##     ## On remplace les symboles d'inégalité par plus joli
+    ##     formule <- gsub( "\\leq([^A-Za-z])", "\\leqslant\\1", formule )
+    ##     formule <- gsub( "\\geq([^A-Za-z])", "\\geqslant\\1", formule )
+    ## }
     
     ## On met la formule
     cat( file = fichier, sep = "", "\n",
