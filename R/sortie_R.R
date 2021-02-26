@@ -17,6 +17,8 @@
 ##                  encadrement : possibilité de centrer
 ##
 ##   13 dec. 2020 : affichage des tableaux 2D contrôlé (mais améliorable)
+##
+##   26 fév. 2021 : correction de caractères spéciaux mal reconnus / CRAN
 ## —————————————————————————————————————————————————————————————————
 
 sortie_R.moodle <- function( objet.R, ... ) {
@@ -269,7 +271,7 @@ sortie_R.moodle.table <- function( objet.R, precision = 4,
         if ( length( noms ) > 0 ) {
         }
         chaine <- paste0( chaine, " <tr style=\"", style.ligne, "\">",
-                          "<!LT>",      # Début de ligne des titres — si retravail ensuite
+                          "<!LT>",      # Début de ligne des titres --- si retravail ensuite
                           paste0( "  <th style=\"", style.noms, "\">",
                                   noms,
                                   "</th>", collapse = "" ),
@@ -279,7 +281,7 @@ sortie_R.moodle.table <- function( objet.R, precision = 4,
         n <- length( table )
         chaine <- paste0( chaine, " <tr style=\"", style.ligne, "\">",
                           paste0( "  <td style=\"", style.contenu, "\">",
-                                  "<!L1C", 1:n, ">", # Début de case — si retravail ensuite
+                                  "<!L1C", 1:n, ">", # Début de case --- si retravail ensuite
                                   unlist( lapply( objet.R, afficher_nombre.moodle ) ),
                                   "</td>", collapse = "" ),
                           "</tr>" )

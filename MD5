@@ -1,6 +1,6 @@
-61f8a156b6a9f6aa566ee54f172d9d93 *DESCRIPTION
+63656f4ad1df88440c083bc76aa20d8c *DESCRIPTION
 35cb97b805832f1581662fe835242292 *NAMESPACE
-d8848d8ace8ee09d95bbb56589b3b064 *R/affichages.R
+070bbfd864233b5d1451de3390f8adb1 *R/affichages.R
 15bd3434b75c54662c80547c88cb3e3b *R/categories.R
 eac3a5f0921939eab8dccc66faac8386 *R/coder_texte.R
 5eb8561c382d71b8b8d3f35c4925727e *R/conversion_csv.R
@@ -8,7 +8,7 @@ eac3a5f0921939eab8dccc66faac8386 *R/coder_texte.R
 93ada4f5d554cff111883385a4a14a00 *R/formules.R
 2a796cfce4aad599a61b05858d1f4fd6 *R/glisser.R
 ae93ef9f97f2420b52155ea9d4a3e80a *R/glossaire.R
-f06c34302e6b17ab1de021f69d2809e3 *R/images.R
+0bb1f5b347d5cce50ed376782cc6fe7d *R/images.R
 074c9ae17f3c2cd098787cba9f353d3b *R/initialisation.R
 24691653aa7611100cf8334f153918d0 *R/libre.R
 dbf678961c8a56cd9ba152e70f0855f0 *R/lier_fichier.R
@@ -17,7 +17,7 @@ dbf678961c8a56cd9ba152e70f0855f0 *R/lier_fichier.R
 64d908bfc48e04ab3938e56b4c1ac4a6 *R/qcm.R
 5286bb6b3d5c1719c2016db9d6ea1642 *R/question.R
 906369ed8bc8f7f822b774bcff38d1b3 *R/redaction.R
-1623d47e9a3fb3504795f58118dee042 *R/sortie_R.R
+576457320dde016331124569e3b4f5cb *R/sortie_R.R
 016b43842e6d365ef215111a1a5cd1c9 *R/textes.R
 d2f76199ca3435808d4a04faec6549be *man/affichages.Rd
 519f980d089ab7ba999b0e802d37834d *man/categorie.Rd
@@ -33,7 +33,7 @@ b19ac36735038287e2061b3aa2f520aa *man/glossaire.Rd
 802bb9ebabe081eaf156de4328ef67fc *man/inserer_formule.Rd
 b93f62ae86e5fb815b9c83e131eb9bc8 *man/inserer_smiles.Rd
 fd5e262ef7db2d5b171a119cfe2bfef3 *man/legender.Rd
-f6cba4d115b64465cc89ec626caaed30 *man/libre.moodle.Rd
+ac6d67b0279f6e04afe5e185a445b695 *man/libre.moodle.Rd
 9c45c06725f1a5842a516c213ccbcfd8 *man/lit_fichier.Rd
 e4b2dd829902ce0ef4e19f8509f9003d *man/messages.Rd
 555fe8530e3a7a67bff9a4f83e980828 *man/numerique.moodle.Rd

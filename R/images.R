@@ -14,16 +14,18 @@
 ##                      Fonctionne au sein du même texte : on se limite à cela...
 ##
 ##   19 avril   2020 : dossier local d'image paramétrable avec definir_dossier.image.moodle
+##
+##   30 janvier 2021 : corrigé une coquille dans l'affichage des dossiers modifiés
 ## —————————————————————————————————————————————————————————————————
 
 definir_dossier.image.moodle <- function( URL, local = FALSE ) {
     if ( local ) {
-        print( paste( "Le dossier local des images est fix\u00e8e \u00e0 ",
+        print( paste( "Le dossier local des images est fix\u00e9 \u00e0 ",
                      URL ) )
         assign( "dossier.images", URL, envir = SARP.Moodle.env )
     } else {
         
-        print( paste( "L'URL de base des images est fix\u00e8e \u00e0 ",
+        print( paste( "L'URL de base des images est fix\u00e9e \u00e0 ",
                       URL ) )
         assign( "URL_base", URL, envir = SARP.Moodle.env )
     }

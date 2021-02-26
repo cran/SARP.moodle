@@ -14,6 +14,8 @@
 ##   10 juin 2020 : quand notation scientifique, on force l'insécabilité...
 ##
 ##   13 juin 2020 : affichage de plusieurs échantillons de valeurs
+##
+##   26 fév. 2021 : correction de caractères spéciaux mal reconnus / CRAN
 ## ——————————————————————————————————————————————————————————————————————
 
 ######################################################################
@@ -190,7 +192,7 @@ afficher_echantillons.moodle <- function( x, trier = FALSE,
     for ( i in 1:n.echantillons ) {
         chaine <- paste0( chaine,
                           " <tr style=\"", style.ligne, "\">",
-                          "<!E", i, ">" ) # Début d'échantillon, si retravail ensuite…
+                          "<!E", i, ">" ) # Début d'échantillon, si retravail ensuite...
 
         if ( length( pre.texte ) > 0 ) {
             chaine <- paste0( chaine,
