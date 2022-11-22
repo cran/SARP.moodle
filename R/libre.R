@@ -38,6 +38,8 @@
 ##   25 juin    2020 : déplacé les questions rédactionnelles ailleurs
 ##
 ##    1 janvier 2020 : prise en charge de l'identifiant numérique unique
+##
+##    3 juillet 2022 : adaptation pour utiliser le temps de catégorie
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -238,8 +240,8 @@ gr.numerique <- function( reponses, commentaires )
 ## ———————————————————————————————————
 ##
 ## Construction des questions de type « QROC »
-##  Types : SHORTANSWER   =
-##          SHORTANSWER_C =
+##  Types : SHORTANSWER   = insensible à la casse
+##          SHORTANSWER_C = sensible à la casse
 ##  Champ de texte à remplir, réponse confrontée à celles enregistrées
 ##
 ## reponses = une liste avec deux éléments :
@@ -492,10 +494,8 @@ question_libre.moodle <- function( texte.intro, textes.avant, texte.final,
 
     
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
 
     ## On crée la question
     question.moodle( fichier.xml = fichier.xml, type = "cloze",

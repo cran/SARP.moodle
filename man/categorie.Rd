@@ -10,19 +10,25 @@
 }
 \usage{
 categorie.moodle( nom.categorie, autoriser.dollar = FALSE,
+                  temps = NULL,
                   fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
 }
 \arguments{
   \item{nom.categorie}{ Le nom de la catégorie. Il est possible de
-    donner une hiérarchie de
-    catégories, en utilisant la barre oblique  (\code{/}) comme séparateur des
-    différents niveaux --- comme dans un chemin incluant des dossiers.}
+    donner une hiérarchie de catégories, en utilisant la barre oblique
+    (\code{/}) comme séparateur des différents niveaux --- comme dans un
+    chemin incluant des dossiers.}
 
   \item{autoriser.dollar}{Le dollar (\code{$}) est un caractère réservé,
-  qui permet d'ancrer les catégories dans les divers cours. Pour éviter
-  des difficultés, les dollars sont donc remplacés par des soulignés
-  (\code{_}). Cette conversion peut être désactivée en indiquant
-  \code{TRUE} pour cette option.}
+    qui permet d'ancrer les catégories dans les divers cours. Pour
+    éviter des difficultés, les dollars sont donc remplacés par des
+    soulignés (\code{_}). Cette conversion peut être désactivée en
+    indiquant \code{TRUE} pour cette option.}
+
+  \item{temps}{Le temps conseillé pour répondre aux questions de la
+    catégorie. Ce temps sera utilisé pour toutes les questions créées
+    jusqu'au prochain appel de cette fonction, si aucun temps conseillé
+    n'est indiqué lors de l'appel à la fonction créant la fonction.}
 
   \item{fichier.xml}{ Le fichier correspondant au questionnaire qui
     contiendra cette question (par défaut, le dernier créé).  }
@@ -37,7 +43,7 @@ categorie.moodle( nom.categorie, autoriser.dollar = FALSE,
   visible, utilisez des espaces entre les séparateurs ou après le dernier.
 }
 \value{
-Aucune valeur n'est renvoyée par cette fonction.
+  Aucune valeur n'est renvoyée par cette fonction.
 }
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}

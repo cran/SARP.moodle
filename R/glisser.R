@@ -25,6 +25,8 @@
 ##    1 jan. 2021 : prise en compte de l'identifiant numérique
 ##                  gestion des groupes d'étiquettes pour le glisser-déposer sur image
 ##                  possibilité d'étiquettes sans zone associée dans le glisser-déposer sur image
+##
+##    3 jui. 2022 : adaptation pour utiliser le temps de catégorie
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -47,10 +49,8 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
                                     ... )
 {
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
     
     ## On commence la question
     debut_question.moodle( type = "ddimageortext",
@@ -201,10 +201,8 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
                                    ... )
 {
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
     
     ## On commence la question
     debut_question.moodle( type = "ddmarker",
@@ -439,10 +437,8 @@ glisser_textes.moodle <- function( texte, titre = "Glisser les textes...",
     ## print( texte )
 
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
     
     ## On commence la question
     debut_question.moodle( type = "ddwtos",

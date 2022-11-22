@@ -67,6 +67,9 @@ sortie_R.moodle( objet.R, ... )
 \value{
   Une chaîne de caractère contenant le code HTML approprié.
 }
+\seealso{\code{\link{afficher_echantillon.moodle}} pour afficher un
+  vecteur de valeurs sous forme d'un tableau.
+}
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
 }

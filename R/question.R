@@ -21,6 +21,8 @@
 ##   29 avril   2020 : bloc générique « q. à réponses multiple » [début]
 ##
 ##    1 janvier 2021 : tag « idnumber » pris en compte (entier)
+##
+##    3 juillet 2022 : corrigé la balise pour indiquer le nombre de réponses correctes
 ## ─────────────────────────────────────────────────────────────────
 
 question.moodle <- function( type = "cloze",
@@ -260,6 +262,8 @@ bloc.reponse_multiple <- function( ordre.aleatoire,
 
         if ( montrer.nombre.correct ) {
             cat( file = fichier.xml, sep = "",
+                 "  <shownumcorrect>",
+                 if ( montrer.nombre.correct ) "true" else "false",
                  "  <shownumcorrect/>\n" )
         }
     }

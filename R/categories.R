@@ -9,9 +9,12 @@
 ##                     corrigé le remplacement des $…
 ##
 ##    1 janvier 2021 : on maintient une liste d'identifiants numériques
+##
+##    3 juillet 2022 : possibilité d'indiquer un temps conseillé pour la catégorie
 ## ─────────────────────────────────────────────────────────────────
 
-categorie.moodle <- function( nom.categorie, autoriser.dollar = FALSE,
+categorie.moodle <- function( nom.categorie, autoriser.dollar = FALSE, 
+                              temps = NULL,
                               fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) ) {
     ## On supprime les $, sauf si explicitement demandé de les garder
     if ( FALSE == autoriser.dollar ) {
@@ -34,4 +37,17 @@ categorie.moodle <- function( nom.categorie, autoriser.dollar = FALSE,
 
     ## On remet à 0 la liste des identifiants
     assign( "liste.ids", integer(), envir = SARP.Moodle.env )
+
+    ## On supprime tout temps conseillé d'une catégorie précédente
+    if ( exists( "temps.categorie", envir = SARP.Moodle.env ) ) {
+        remove( "temps.categorie", envir = SARP.Moodle.env )
+    }
+
+    ## On mémorise le temps conseillé, au besoin
+    if ( !missing( temps ) ) {
+        if ( all( !is.na( temps ),
+                  !is.null( temps ) ) ) {
+            assign( "temps.categorie", temps, envir = SARP.Moodle.env )
+        }
+    }
 }

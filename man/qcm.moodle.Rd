@@ -18,7 +18,7 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
             fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
             commentaire.global = NA, penalite = NA, note.question = NA,
             idnum = NA,
-            temps )
+            temps, instructions = TRUE )
 }
 \arguments{
   \item{texte}{ L'énoncé de la question (une chaîne de caractères). Cet
@@ -83,6 +83,11 @@ qcm.moodle( texte, bonnes.reponses, mauvaises.reponses,
   
   \item{temps}{ Le temps conseillé pour répondre à la question, en
     minutes. }
+
+  \item{instructions}{ Faut-il afficher, avant les réponses possibles,
+    le texte générique de Moodle rappelant les instructions (typiquement,
+    \dQuote{Veuillez choisir au moins une réponse})? (Oui si
+    \code{TRUE}, non si \code{FALSE}). }
 }
 
 \details{ La question générée avec cette fonction est une question de

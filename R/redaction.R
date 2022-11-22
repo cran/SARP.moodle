@@ -11,6 +11,8 @@
 ##                 options de contrôle des réponses
 ##
 ##   1 jui. 2020 : correction de deux coquilles
+##
+##    3 jui. 2022 : adaptation pour utiliser le temps de catégorie
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -30,10 +32,8 @@ question_ouverte.moodle <- function( texte,
                                      fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )
 {
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
     
     ## On crée la question
     debut_question.moodle( type = "essay",

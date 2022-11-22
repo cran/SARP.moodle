@@ -23,6 +23,11 @@
 ##    1 juillet 2020 : si QCU, pas de point négatif par défaut pour les mauvaises réponses
 ##
 ##    1 janvier 2021 : prise en charge de l'identifiant numérique unique
+##
+##    3 juillet 2022 : adaptation pour utiliser le temps de catégorie
+##
+##   30 août    2022 : possibilité de ne pas afficher les instructions par défaut du QCM
+##                       (balise <showstandardinstruction>)
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -45,10 +50,8 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
     }
     
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
 
     ## On détermine l'ordre des réponses
     if ( any( is.null( ordre ), is.character( ordre ) ) ) {
@@ -94,7 +97,7 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
                         titre = "QCM...", numerotation = c( "none", "abc", "ABCD", "123" ),
                         fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ),
                         commentaire.global = NA, penalite = NA, note.question = NA, idnum = NA,
-                        temps )
+                        temps, instructions = TRUE )
 {
   ## On prépare les réponses
   n.bonnes <- length( bonnes.reponses )
@@ -176,13 +179,12 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
   ## Compléments
   codes <- c( "single"         = if ( TRUE == unique   ) "true" else "false",
               "shuffleanswers" = if ( TRUE == melanger ) 1 else 0,
-              "answernumbering"= match.arg( numerotation ) )
+              "answernumbering"= match.arg( numerotation ),
+              "showstandardinstruction" = if ( TRUE == instructions ) 1 else 0 )
 
-    ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+  ## On ajoute l'indication de temps éventuelle
+  texte <- paste0( texte, 
+                   temps_necessaire.moodle( temps ) )
 
   ## On fait la question
   question.moodle( fichier.xml = fichier.xml, type = "multichoice",
@@ -215,10 +217,8 @@ qroc.moodle <- function( texte, reponses, notes = rep( 100, length( reponses ) )
     codes <- c( "usecase"         = if ( TRUE == casse ) 1 else 0 )
 
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
 
     ## On fait la question
     question.moodle( fichier.xml = fichier.xml, type = "shortanswer",

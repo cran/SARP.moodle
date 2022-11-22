@@ -106,8 +106,8 @@ inserer_formule.moodle( formule, filtre.Moodle = FALSE,
 
   # Le format par défaut, avec deux bonnes réponses et trois mauvaises,
   qcm.moodle( "Quelle est la définition de la tangente&thinsp;?",
-              inserer_formule.moodle( "\\frac{\\sin x}{\\cos x}" ),
-              inserer_formule.moodle( "\\frac{\\cos x}{\\sin x}" ) )
+              inserer_formule.moodle( "\\\\frac{\\\\sin x}{\\\\cos x}" ),
+              inserer_formule.moodle( "\\\\frac{\\\\cos x}{\\\\sin x}" ) )
 
   # On termine le questionnaire
   finir_xml.moodle( )

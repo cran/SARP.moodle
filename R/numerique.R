@@ -14,6 +14,8 @@
 ##   31 mai     2020 : ajout du temps conseillé pour répondre
 ##
 ##    1 janvier 2021 : prise en compte de l'identifiant numérique
+##
+##    3 juillet 2022 : adaptation pour utiliser le temps de catégorie
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -131,10 +133,8 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
     }
 
     ## On ajoute l'indication de temps éventuelle
-    if ( !missing( temps ) ) {
-        texte <- paste0( texte, 
-                         temps_necessaire.moodle( temps ) )
-    }
+    texte <- paste0( texte, 
+                     temps_necessaire.moodle( temps ) )
     
     if ( missing( commentaire.global ) ) commentaire.global <- NA
 
@@ -210,8 +210,7 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
 
         ## Comment est choisie l'unité ?
         cat( file = fichier.xml, sep = "",
-             "  <showunits>", as.integer( unite.visible ), "</showunits>\n" )        
-             
+             "  <showunits>", as.integer( unite.visible ), "</showunits>\n" )             
         
         ## Unité à gauche ? (par défaut, à droite)
         cat( file = fichier.xml, sep = "",

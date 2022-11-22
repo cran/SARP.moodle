@@ -17,6 +17,7 @@ csv.moodle(fichier.csv,
            colonne.code = NA, colonne.type = NA,
            colonne.retour = NA, colonne.global = NA,
            colonne.penalite = NA,
+           colonne.temps = NA,
            fichier.xml = if ( TRUE == nv.fichier ) gsub(
                               "\\\\.[Cc][Ss][Vv]$",
                               ".xml", fichier.csv )
@@ -113,8 +114,13 @@ csv.moodle(fichier.csv,
     (par exemple, si la question a une note globale de 2 et la pénalité
     est de 0,5, à la seconde tentative la note maximale possible sera de
     1) ou rester vide. Toute pénalité non indiquée sera supposée
-    égale à 1 (pas de pénalité en cas de nouvelle tentative).}
-  
+    égale à 1 (pas de pénalité en cas de nouvelle tentative).
+  }
+
+  \item{colonne.temps}{ Le nom ou le numéro de la colonne qui contient
+    le temps conseillé pour la question. Cette colonne est facultative.
+  }
+
   \item{fichier.xml}{
     Le nom du fichier XML à créer ou un fichier XML déjà créé avec
     \code{\link{debuter_xml.moodle}}. Par
@@ -219,18 +225,19 @@ csv.moodle(fichier.csv,
   de la question est déduite de la réponse. Si la réponse peut être
   convertie en nombre, la question est supposée être une réponse
   numérique; elle sera créée avec un appel à
-  \code{\link{numerique.moodle}}. Si la réponse est identifiée comme une
-  valeur logique (un des textes « V », « F », « T », « Vrai », « Faux »,
-  « True » ou « False », quelle que soit la casse), la question est
-  supposée être une question binaire avec les deux réponses « Vrai » et
-  « Faux »; elle sera créée avec un appel à
-  \code{\link{vrai_faux.moodle}}. Dans tous les autres cas, la question
+  \code{\link{numerique.moodle}}.  Si la réponse est identifiée comme
+  une valeur logique (un des textes « V », « F », « T », « Vrai », «
+  Faux », « True » ou « False », quelle que soit la casse), la question
+  est supposée être une question binaire avec les deux réponses « Vrai »
+  et « Faux »; elle sera créée avec un appel à
+  \code{\link{vrai_faux.moodle}}.  Dans tous les autres cas, la question
   est supposée être à réponse ouverte et courte et sera créée par un
   appel à \code{\link{qroc.moodle}}.
 
   S'il y a un énoncé, mais pas de réponse, cet énoncé est supposé être
   une indication de catégorie (sauf si la question a le même code qu'une
-  question « cloze », voir plus loin) qui sera créée comme une
+  question « cloze », voir plus loin, ou si la colonne précisant le type
+  de question indique un type particulier) qui sera créée comme une
   sous-catégorie de la catégorie de base, par un appel à
   \code{\link{categorie.moodle}}.
 
@@ -245,18 +252,24 @@ csv.moodle(fichier.csv,
   associées à l'inverse du nombre de bonnes réponses, de sorte que
   cocher toutes les bonnes réponses donne la note totale; les mauvaises
   réponses sont associées à la note 0 (si \code{somme.nulle=FALSE}:
-  cocher ou non ces réponses ne change rien à la note) ou à l'oppose de
+  cocher ou non ces réponses ne change rien à la note) ou à l'opposé de
   l'inverse du nombre de mauvaises réponses (si \code{somme.nulle=TRUE}:
   cocher ces réponses diminue la note et cocher toutes les réponses
-  donne une somme nulle).
+  donne une somme nulle).  Par défaut, la question construite est
+  toujours un QCM (plusieurs réponses peuvent être choisies), même s'il
+  y a une seule bonne réponse. Pour demander qu'une seule réponse puisse
+  être choisie (QCU), indiquez le type QCU dans la colonne indiquée par
+  \code{colonne.type} pour la question considérée. Si vous voulez que
+  toutes les questions avec une seule bonne réponse soient en QCU, vous
+  pouvez aussi utiliser l'option \code{forcer.multiple = FALSE}.
 
   \strong{Construire des questions \dQuote{\emph{cloze}}}
 
   Pour pouvoir construire des questions \dQuote{\emph{cloze}}, le
   fichier doit obligatoirement contenir une colonne qui indique le code
-  de chaque question. Ce code doit être unique pour une même question;
-  toutes les lignes qui auront le même code seront donc considérées
-  comme faisant partie de la même question.
+  de chaque question (y compris les catégories). Ce code doit être
+  unique pour une même question; toutes les lignes qui auront le même
+  code seront donc considérées comme faisant partie de la même question.
 
   De ce fait, si plusieurs lignes d'énoncé renseignées ont le même code,
   elles sont considérées faisant partie de la même question et sont
@@ -267,11 +280,27 @@ csv.moodle(fichier.csv,
   \code{colonne.reponse} et sert à définir le type de champ de réponse
   (selon la logique des questions en une ligne).  Pour avoir un texte
   après le dernier champ de réponse, laissez la colonne
-  \code{colonne.reponse} tout en gardant le même code de question. Pour
-  avoir des questions avec réponse à choisir dans une liste, mettez une
-  réponse par ligne sans mettre d'énoncé avant. La colonne
-  \code{colonne.type} permet de préciser le type d'affichage, avec les
-  codes Moodle (\code{MULTICHOICE}, \code{multichoice_s}...)
+  \code{colonne.reponse} vide tout en gardant le même code de question.
+
+  Pour avoir des questions avec réponse à choisir dans une liste, mettez
+  une réponse par ligne sans mettre d'énoncé avant, comme pour un QCM.
+  La colonne \code{colonne.type} permet de préciser le type d'affichage,
+  avec les codes Moodle (\code{MULTICHOICE}, \code{MULTICHOICE_S}...).
+  Il est possible d'abréger le code: M correspond à un choix dans un
+  menu déroulant (une seule réponse possible ; \code{MULTICHOICE}) ; H,
+  à des réponses juxtaposés (\code{MULTICHOICE_H}) ; V, à des réponses
+  superposées (\code{MULTICHOICE_V}) ; SA, à un champ libre attendant
+  une réponse courte, de type Q. R. O. C. (\code{SHORTANSWER}).  Pour
+  les réponses superposées ou juxtaposés, par défaut, une seule réponse
+  peut être choisie et l'ordre est celui indiqué dans le fichier. Il est
+  possible d'indiquer que plusieurs réponses peuvent être choisies en
+  ajoutant le code M (VM, HM) ; il est possible de demander à Moodle de
+  tirer au sort l'ordre des réponses en ajoutant le code A (MA, VA,
+  VMA...) ou S (MS, VS...).  Pour le champ libre, par défaut la casse
+  est ignorée. Il est possible d'indiquer que la casse doit être
+  contrôlée grâce au code SAC (\code{SHORTANSWER_C}). L'ordre des codes
+  n'a pas d'importance (HM et MH donneront tous deux une question de
+  type \code{MULTICHOICE_H}).
 
   \strong{Insérer des images}
 

@@ -7,7 +7,9 @@
 ## HISTORIQUE
 ##   24 juin 2020 : création du fichier
 ##
-##    1 jan. 2021 : question de pur text (« description »)
+##    1 jan. 2021 : question de pur texte (« description »)
+##
+##    3 jui. 2022 : corrigé le titre pour les questions description
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -16,7 +18,7 @@
 ##
 ## —————————————————————————————————————————————————————————————————
 description.moodle <- function( texte,
-                                titre = "Question r&eacute;dactionnelle ouverte",
+                                titre = "Description",
                                 commentaire.global = NA, 
                                 idnum = NA, 
                                 fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )

@@ -7,7 +7,7 @@
   Cette fonction permet de créer une question de type description pour Moodle.}
 \usage{
 description.moodle( texte,
-                    titre = "Question r&eacute;dactionnelle ouverte",
+                    titre = "Description",
                     commentaire.global = NA, 
                     idnum = NA, 
                     fichier.xml = get( "fichier.xml", envir = SARP.Moodle.env ) )

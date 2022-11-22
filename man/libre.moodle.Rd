@@ -47,8 +47,11 @@ question_libre.moodle( texte.intro, textes.avant, texte.final,
   \item{types}{ Le vecteur des types de champ réponse. S'il est fourni,
   il doit être de même longueur que \code{reponses}. Les types possibles
   sont les textes \code{NUMERICAL} (par défaut), \code{MULTICHOICE},
-  \code{MULTICHOICE_V}, \code{MULTICHOICE_H}, \code{SHORTANSWER} et
-  \code{SHORTANSWER_C}.  Consultez les détails pour plus d'information.}
+  \code{MULTICHOICE_V}, \code{MULTICHOICE_H}, \code{MULTICHOICE_S},
+  \code{MULTICHOICE_VS}, \code{MULTICHOICE_HS}, \code{MULTIRESPONSE},
+  \code{MULTIRESPONSE_S}, \code{MULTIRESPONSE_H},
+  \code{MULTIRESPONSE_S}, \code{SHORTANSWER} et \code{SHORTANSWER_C}.
+  Consultez les détails pour plus d'information.}
 
   \item{commentaires}{ Une liste de commentaires associés aux réponses
   de chaque champ réponse. Si elle est fournie, elle doit être de même
@@ -88,23 +91,46 @@ Le type \code{NUMERICAL} correspond à un champ attendant une réponse
  \code{Tolerance}.
 
 Les types \code{MULTICHOICE}, \code{MULTICHOICE_V},
- \code{MULTICHOICE_H}, \code{SHORTANSWER} et \code{SHORTANSWER_C}
- correspondent à un champ permettant de choisir (cocher) une ou
- plusieurs réponses dans une liste prédéfinie — c'est l'équivalent d'un
- QCM. Ces cinq types fonctionnent de façon similaire, seule la façon
- d'afficher la question varie (elles donnent respectivement un menu
- déroulant, une série de boutons verticaux, une série de boutons
- horizontaux et un champ de texte libre insensible ou sensible à la
- casse).  Dans les cinq cas, \code{reponses} doit contenir pour ces
- champs une liste de deux éléments, l'un contenant le vecteur des textes
- des réponses (élément nommé \code{Textes}), le second indiquant pour
- chaque texte s'il correspond à une réponse correcte (\code{TRUE}) ou
- non (\code{FALSE}). S'il y a plusieurs réponses correctes, chacune
- donne une fraction égale des points. Les autres cas de réponses donnant
- une partie des points ne sont pas encore possibles avec cette
- fonction. Les commentaires de chaque réponse sont à donner dans un
- vecteur de même longueur que \code{reponses$Textes}; utilisez \code{NA}
- pour une réponse sans commentaire.
+ \code{MULTICHOICE_H}, \code{MULTICHOICE_S}, \code{MULTICHOICE_VS},
+ \code{MULTICHOICE_HS}, \code{MULTIRESPONSE}, \code{MULTIRESPONSE_S},
+ \code{MULTIRESPONSE_S}, \code{MULTIRESPONSE_HS}, \code{SHORTANSWER} et
+ \code{SHORTANSWER_C} correspondent à un champ permettant de choisir
+ (cocher) une ou plusieurs réponses dans une liste prédéfinie — c'est
+ l'équivalent d'un QCM. Tous ces types fonctionnent de façon similaire,
+ seuls la façon d'afficher la question et le nombre de réponses
+ sélectionnables varient (voyez le tableau récapitulatif ci-dessous).
+ Dans tous les cas, \code{reponses} doit contenir pour ces champs une
+ liste de deux éléments, l'un contenant le vecteur des textes des
+ réponses (élément nommé \code{Textes}), le second indiquant pour chaque
+ texte s'il correspond à une réponse correcte (\code{TRUE}) ou non
+ (\code{FALSE}). S'il y a plusieurs réponses correctes, chacune donne
+ une fraction égale des points. Pour préciser la note de chaque réponse,
+ placez dans la liste un élément nommé \code{Notes}, contenant le
+ vecteur des notes de chaque réponse (ces notes doivent être exprimées
+ en pourcentage de la note, arrondi à l'entier le plus proche, parmi les
+ valeurs autorisées par Moodle) ; dans ce cas, l'élément \code{Correct}
+ est ignoré et peut être omis.  Les commentaires de chaque réponse sont
+ à donner dans un vecteur de même longueur que \code{reponses$Textes};
+ utilisez \code{NA} pour une réponse sans commentaire.
+
+ \tabular{rcc}{Code \tab Disposition \tab Remarque \cr
+   \code{MULTICHOICE} \tab Menu déroulant \tab Une seule réponse
+   possible \cr
+   \code{MULTICHOICE_V} \tab Série de boutons radio verticaux \tab Une seule
+   réponse \cr
+   \code{MULTICHOICE_H} \tab Série de boutons radio horizontaux \tab Une seule
+   réponse \cr
+   \code{MULTIRESPONSE} \tab Série de cases à cocher verticales \tab Plusieurs
+   réponse possibles \cr
+   \code{MULTICHOICE_H} \tab Série de cases à cocher horizontales \tab Plusieurs
+   réponses possibles \cr
+   \code{SHORTANSWER} \tab Champ de texte libre \tab sensible à
+ la casse \cr
+   \code{SHORTANSWER_C} \tab Champ de texte libre \tab insensible à
+   la casse \cr
+ }
+ Les variantes avec le suffixe S conduisent à un ordre des réponses tiré
+   au sort par Moodle lors de l'affichage de la question.
 
  Une fois le texte complet de la question créé, au format « cloze », à
  partir de ces éléments, la question est créée grâce à la fonction
