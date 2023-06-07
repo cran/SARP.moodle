@@ -16,6 +16,8 @@
 ##    1 janvier 2021 : prise en compte de l'identifiant numérique
 ##
 ##    3 juillet 2022 : adaptation pour utiliser le temps de catégorie
+##
+##   18 mai     2023 : conversion stop → erreur
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -50,12 +52,14 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
     ## Les contrôles initiaux
     ##   -> la réponse doit être numérique...
     if ( FALSE == is.numeric( bonne.reponse ) ) {
-        stop( "Pour une question num\u00e9rique, la bonne r\u00e9ponse doit \u00eatre un nombre" )
+        erreur( 300, "numerique.moodle",
+                "Pour une question num\u00e9rique, la bonne r\u00e9ponse doit \u00eatre un nombre" )
     }
 
     ##   -> il faut autant de notes que de réponses
     if ( length( notes ) != length( bonne.reponse ) ) {
-        stop( "Il faut autant de notes que de r\u00e9ponses" )
+        erreur( 301, "numerique.moodle",
+                "Il faut autant de notes que de r\u00e9ponses" )
     }
     
     ## Si la réponse est un entier, pas de notion de décimales, arrondi etc.
@@ -68,8 +72,9 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
     ##   -> on ne doit pas imposer à la fois le nombre de décimales
     ##        et le nombre de chiffres significatifs
     if ( all( is.finite( n.decimales ), is.finite( n.significatifs ) ) ) {
-        stop( "On peut imposer le nombre de chiffres apr\u00e8 la virgule",
-              " ou le nombre de chiffre significatifs, mais pas les deux !" )
+        erreur( 302, "numerique.moodle",
+                "On peut imposer le nombre de chiffres apr\u00e8s la virgule",
+                " ou le nombre de chiffre significatifs, mais pas les deux !" )
     }
 
     reponse <- bonne.reponse
@@ -80,7 +85,8 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
     n.decimales <- as.integer( n.decimales )
     if ( is.finite( n.decimales ) ) {
         if ( any( n.decimales < 0 ) ) {
-            stop( "Un nombre de d\u00e9cimales doit \u00eatre positif !" )
+            erreur( 303, "numerique.moodle",
+                    "Un nombre de d\u00e9cimales doit \u00eatre positif !" )
         }
         
         bonne.reponse <- round( bonne.reponse, n.decimales )
@@ -104,7 +110,8 @@ numerique.moodle <- function( texte, bonne.reponse, notes = 100,
     n.significatifs <- as.integer( n.significatifs )
     if ( is.finite( n.significatifs ) ) {
         if ( any( n.significatifs <= 0 ) ) {
-            stop( "Un nombre de chiffres significatifs doit \u00eatre strictement positif !" )
+            erreur( 304, "numerique.moodle",
+                    "Un nombre de chiffres significatifs doit \u00eatre strictement positif !" )
         }
         
         bonne.reponse <- round( bonne.reponse, n.significatifs )

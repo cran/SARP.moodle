@@ -40,6 +40,8 @@
 ##    1 janvier 2020 : prise en charge de l'identifiant numérique unique
 ##
 ##    3 juillet 2022 : adaptation pour utiliser le temps de catégorie
+##
+##   18 mai     2023 : conversion stop → erreur et warning → avertissement
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -133,7 +135,8 @@ generer_question <- function( note = NA, type, reponses, commentaires ) {
                            reponses = reponses,
                            commentaires = commentaires )
     } else {
-        stop( "[CLOZE] Type de question inconnu [", type, "]" )
+        erreur( , "generer_question",
+                "[CLOZE] Type de question inconnu [", type, "]" )
     }
 
     ## À partir des réponses, on construit la question proprement dite
@@ -167,17 +170,21 @@ gr.numerique <- function( reponses, commentaires )
         ## Les valeurs attendues pour les réponses
         valeurs <- reponses$Valeurs
         if ( length( valeurs ) < 1 ) {
-            stop( "Aucune r\u00e9ponse propos\u00e9 :",
-                  " l'import dans Moodle \u00e9choura." )
+            erreur( 251, "gr.numerique",
+                    "Aucune r\u00e9ponse propos\u00e9 :",
+                    " l'import dans Moodle \u00e9chouera." )
         }
         if ( any( is.na( valeurs ) ) ) {
-            stop( "Valeur NA : l'import dans Moodle \u00e9choura." )
+            erreur( 252, "gr.numerique",
+                    "Valeur NA : l'import dans Moodle \u00e9chouera." )
         }
         if ( any( is.nan( valeurs ) ) ) {
-            stop( "Valeur NaN : l'import dans Moodle \u00e9choura." )
+            erreur( 253, "gr.numerique",
+                    "Valeur NaN : l'import dans Moodle \u00e9chouera." )
         }
         if ( any( !is.finite( valeurs ) ) ) {
-            stop( "Valeur Inf : l'import dans Moodle \u00e9choura." )
+            erreur( 254, "gr.numerique",
+                    "Valeur Inf : l'import dans Moodle \u00e9chouera." )
         }
 
         ## On construit les tolérances
@@ -189,12 +196,14 @@ gr.numerique <- function( reponses, commentaires )
             tolerance <- rep( tolerance, length( valeurs ) )
         }
         if ( any( is.na( tolerance ) ) ) {
-            warning( "Tol\u00e9rances manquantes, impos\u00e9es \u00e0 0." )
+            avertissement( 250, "gr.numerique",
+                           "Tol\u00e9rances manquantes, impos\u00e9es \u00e0 0." )
             tolerance[ which( is.na( tolerance ) ) ] <- 0
         }
         if ( length( tolerance ) != length( valeurs ) ) {
-            stop( "Il y a ", length( valeurs ), " r\u00e9ponses",
-                  " mais ", length( tolerance ), " tol\u00e9rances." )
+            erreur( 255, "gr.numerique",
+                    "Il y a ", length( valeurs ), " r\u00e9ponses",
+                    " mais ", length( tolerance ), " tol\u00e9rances." )
         }
 
         ## On récupère les notes
@@ -208,8 +217,9 @@ gr.numerique <- function( reponses, commentaires )
             notes <- rep( notes, length( valeurs ) )
         }
         if ( length( notes ) != length( valeurs ) ) {
-            stop( "Il y a ", length( valeurs ), " r\u00e9ponse", if ( length( valeurs ) > 1 ) "s",
-                  " mais ", length( notes ), " note", if ( length( notes ) > 1 ) "s." )
+            erreur( 256, "gr.numerique",
+                    "Il y a ", length( valeurs ), " r\u00e9ponse", if ( length( valeurs ) > 1 ) "s",
+                    " mais ", length( notes ), " note", if ( length( notes ) > 1 ) "s." )
         }
 
         ## On construit le texte décrivant les réponses
@@ -272,8 +282,9 @@ gr.qroc <- function( reponses, commentaires )
         notes <- rep( notes, length( textes ) )
     }
     if ( length( notes ) != length( textes ) ) {
-        stop( "Il y a ", length( textes ), " r\u00e9ponses",
-              " mais ", length( notes ), " notes." )
+        erreur( 256, "gr.qroc",
+                    "Il y a ", length( textes ), " r\u00e9ponse", if ( length( textes ) > 1 ) "s",
+                    " mais ", length( notes ), " note", if ( length( notes ) > 1 ) "s." )
     }
 
     ## Construction proprement dite du champ
@@ -309,8 +320,9 @@ gr.qcu <- function( type, reponses, commentaires )
     ## On récupère les réponses
     txt.reponses  <- reponses$Textes
     if ( length( txt.reponses ) < 2 ) {
-        stop( "[CLOZE] QCU : une seule r\u00e9ponse propos\u00e9,",
-              " il en faut au moins 2" )
+        erreur( 257, "gr.qcu",
+                "[CLOZE] QCU : une seule r\u00e9ponse propos\u00e9e,",
+                " il en faut au moins 2." )
     }
     
     ## On protège les textes des réponses
@@ -321,7 +333,8 @@ gr.qcu <- function( type, reponses, commentaires )
     ## Si l'on n'a pas précisé quelle est la bonne réponse
     ##  on suppose que c'est la première
     if ( FALSE == hasName( reponses, 'Correct' ) ) {
-        warning( "[CLOZE] QCU : \u00e9l\u00e9lement Correct absent des r\u00e9ponses" )
+        avertissement( 251,  "gr.qcu",
+                       "[CLOZE] QCU : \u00e9l\u00e9ment Correct absent des r\u00e9ponses." )
         reponses$Correct <- c( TRUE, rep( FALSE, length( reponses ) - 1 ) )
     }
 
@@ -330,17 +343,19 @@ gr.qcu <- function( type, reponses, commentaires )
     
     n.correctes <- length( which( txt.correctes == TRUE ) )
     if ( n.correctes == 0 ) {
-        stop( "Aucune r\u00e9ponse correcte parmi celles indiqu\u00e9es !",
-              "(R\u00e9ponses : ", paste0( "[", txt.reponses, "]", collapse = " // " ), ")" )
+        erreur( 258, "gr.qcu",
+                "Aucune r\u00e9ponse correcte parmi celles indiqu\u00e9es !",
+                "(R\u00e9ponses : ", paste0( "[", txt.reponses, "]", collapse = " // " ), ")" )
     }
     if ( ( n.correctes > 1 ) &
          !( type %in% c( 'MULTICHOICE', 'MULTICHOICE_S' ) ) ) {
-        stop( "Moodle n'autorise pas plusieurs r\u00e9ponses correctes",
-              " dans une question multiple cloze de type",
-              " MULTICHOICE avec boutons radios (_H, _V, _HS, _VS)",
-              " (l'import \ue00e9choue)\n",
-              " [type = ", type , ", reponses = {", 
-              paste0( reponses, collapse = ", " ), "}]" )
+        erreur( 259, "gr.qcu",
+                "Moodle n'autorise pas plusieurs r\u00e9ponses correctes",
+                " dans une question multiple cloze de type",
+                " MULTICHOICE avec boutons radios (_H, _V, _HS, _VS)",
+                " (l'import \u00e9choue)\n",
+                " [type = ", type , ", reponses = {", 
+                paste0( reponses, collapse = ", " ), "}]" )
     }
 
     correct <- ifelse( txt.correctes, "=", "" )
@@ -375,8 +390,9 @@ gr.qcm <- function( type, reponses, commentaires )
     textes  <- reponses$Textes
     n.reponses  <- length( textes )
     if ( n.reponses < 2 ) {
-        stop( "[CLOZE] QCM : une seule r\u00e9ponse propos\u00e9,",
-              " il en faut au moins 2" )
+        erreur( 260, "gr.qcm",
+                "[CLOZE] QCM : une seule r\u00e9ponse propos\u00e9e,",
+                " il en faut au moins 2." )
     }
     
     ## On protège quelques caractères spéciaux
@@ -388,16 +404,19 @@ gr.qcm <- function( type, reponses, commentaires )
         if ( hasName( reponses, "Correct" ) ) {
             correct <- reponses$Correct
             if ( length( correct ) != n.reponses ) {
-                stop( "Il y a ", n.reponses, " r\u00e9ponses",
-                      " mais ", length( correct ), " indications de correct/incorrect." )
+                erreur( 261, "gr.qcm",
+                        "Il y a ", n.reponses, " r\u00e9ponses",
+                        " mais ", length( correct ), " indication", if ( length( correct ) > 1 ) "s",
+                        " de correct/incorrect." )
             }
 
             n.correctes <- length( which( correct ) )
             if ( n.correctes == 0 ) {
-                stop( "Aucune r\u00e9ponse correcte parmi celles indiqu\u00e9es !",
-                      "(R\u00e9ponses : ",
-                      paste0( "[", textes, "]", collapse = " // " ),
-                      ")" )
+                erreur( 258, "gr.qcm",
+                        "Aucune r\u00e9ponse correcte parmi celles indiqu\u00e9es !",
+                        "(R\u00e9ponses : ",
+                        paste0( "[", textes, "]", collapse = " // " ),
+                        ")" )
             }
 
             ## Même note pour toutes les correctes
@@ -412,16 +431,18 @@ gr.qcm <- function( type, reponses, commentaires )
             }
             notes <- ifelse( reponses$Correct, round( note.ok, 0 ), round( note.nok, 0 ) )
         } else {
-            stop( "Ni note, ni indication de bonne r\u00e9ponse.",
-                  " Impossible de construire la question." )
+            erreur( 18, "gr.qcm",
+                    "Ni note, ni indication de bonne r\u00e9ponse.",
+                    " Impossible de construire la question." )
         }
     }
     ## if ( length( notes ) == 1 ) {
     ##     notes <- rep( notes, length( reponses ) )
     ## }
     if ( length( notes ) != n.reponses ) {
-        stop( "Il y a ", n.reponses, " r\u00e9ponses",
-              " mais ", length( notes ), " notes." )
+        erreur( 256, "gr.qcm",
+                "Il y a ", n.reponses, " r\u00e9ponse", if ( n.reponses > 1 ) "s",
+                " mais ", length( notes ), " note", if ( length( notes ) > 1 ) "s", "." )
     }
 
     ## On construit les champs de réponse
@@ -446,9 +467,10 @@ question_libre.moodle <- function( texte.intro, textes.avant, texte.final,
     ## Combien de questions au total ?
     if( length( textes.avant ) != length( reponses ) ) {
         print( textes.avant )
-        stop( "Le nombre de r\u00e9ponses [", length( reponses ), "]",
-              " et le nombre de champs [", length( textes.avant ), "]",
-              " discordent..." )
+        erreur( 19, "question_libre.moodle",
+                "Le nombre de r\u00e9ponses [", length( reponses ), "]",
+                " et le nombre de champs [", length( textes.avant ), "]",
+                " discordent..." )
     }
     n.questions <- length( reponses )
 
@@ -460,10 +482,12 @@ question_libre.moodle <- function( texte.intro, textes.avant, texte.final,
         types <- rep( "NUMERICAL", n.questions )
     }
     if ( length( types ) != n.questions ) {
-        stop( "Il faut autant de types que de champs r\u00e9ponses..." )
+        erreur( 20, "question_libre.moodle",
+                "Il faut autant de types que de champs r\u00e9ponses..." )
     }
     if ( length( notes ) != n.questions ) {
-        stop( "Il faut autant de notes que de champs r\u00e9ponses..." )
+        erreur( 21, "question_libre.moodle",
+                "Il faut autant de notes que de champs r\u00e9ponses..." )
     }
   
     if ( length( commentaires ) == 0 ) {
@@ -487,7 +511,8 @@ question_libre.moodle <- function( texte.intro, textes.avant, texte.final,
     ##    print( texte )
     if( length( texte ) != 1 ) {
         print( texte )
-        stop( "Erreur dans la cr\u00e9ation de la question cloze" )
+        erreur( 262, "question_libre.moodle",
+                "Erreur dans la cr\u00e9ation de la question cloze" )
     }
 
     if ( missing( commentaire.global ) ) commentaire.global <- NA

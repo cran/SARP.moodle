@@ -7,6 +7,8 @@
 ## HISTORIQUE
 ##    1 janvier 2021 : création du fichier
 ##                     repris de lier_image.moodle
+##
+##   18 mai     2023 : conversion stop → erreur
 ## —————————————————————————————————————————————————————————————————
 
 lier_fichier.moodle <- function( nom.fichier, texte.lien = NULL,
@@ -19,8 +21,9 @@ lier_fichier.moodle <- function( nom.fichier, texte.lien = NULL,
     }
     if ( any( is.null( URL.base ), nchar( URL.base ) < 1,
               FALSE == is.character( URL.base ) ) ) {
-        stop( "D\u00e8finissez la partie commune de l'URL des fichiers",
-              " gr\u00e2ce \u00e0 la fonction definir_dossier.image.moodle" )
+        erreur( 650, "lier_fichier.moodle",
+                "D\u00e8finissez la partie commune de l'URL des fichiers",
+                " gr\u00e2ce \u00e0 la fonction definir_dossier.image.moodle" )
     }
 
     url <- paste0( URL.base, "/", nom.fichier )

@@ -1,17 +1,14 @@
-\name{csv.moodle}
-\alias{conversion_csv.moodle}
-\alias{csv.moodle}
-\alias{ods.moodle}
-\alias{xlsx.moodle}
+\name{df.moodle}
+\alias{df.moodle}
 \title{
-  Convertir un fichier CSV, ODS ou XLSX en questions Moodle
+  Convertir une data.frame en questions Moodle
 }
 \description{
-  Cette fonction permet de convertir un fichier convenablement
+  Cette fonction permet de convertir une data.frame, convenablement
   construit, en un fichier XML de questions pour Moodle
 }
 \usage{
-csv.moodle(fichier.csv,
+df.moodle( d,
            colonne.texte = NA, colonne.reponse = NA,
            colonne.note = NA, colonne.note_question = NA,
            colonne.titre = NA,
@@ -19,99 +16,44 @@ csv.moodle(fichier.csv,
            colonne.retour = NA, colonne.global = NA,
            colonne.penalite = NA,
            colonne.temps = NA, colonne.decimale = NA,
-           fichier.xml = if ( TRUE == nv.fichier ) gsub(
-                              "\\\\.[Cc][Ss][Vv]$",
-                              ".xml", fichier.csv )
-                         else get( "fichier.xml",
-                                   envir = SARP.Moodle.env ),
-           nv.fichier = TRUE,
+           fichier.xml,
            creer.titre = TRUE, lg.titre = 30,
            embellir = TRUE, deja.HTML = FALSE,
            forcer.multiple = TRUE, melanger.reponses = TRUE,
            somme.nulle = FALSE, precision = 3,
            categorie.base = "",
-           dossier.images = dirname( fichier.csv ), 
+           dossier.images, 
            sep.images = c( '@@', '@@' ), inserer.images = TRUE,
            sep.formules = c( '@\\\\$', '\\\\$@' ),
            sep.SMILES = c( '@\\\\{', '\\\\}@' ),
-           sep = if ( extension == "txt" ) "" else ";",
-           header = TRUE, quote = '\"',
-           ... )
-
-ods.moodle( fichier.ods, onglet = NA,
-            colonne.texte  = NA, colonne.reponse = NA,
-            colonne.note   = NA, colonne.note_question = NA,
-            colonne.titre  = NA, colonne.code = NA, colonne.type = NA,
-            colonne.retour = NA, colonne.global = NA, colonne.penalite = NA,
-            colonne.temps  = NA, colonne.decimale = NA,
-            fichier.xml = if ( TRUE == nv.fichier ) gsub( "\\\\.[Oo][Dd][Ss]$",
-                                                          ".xml",
-                                                          fichier.ods )
-                          else get( "fichier.xml", envir = SARP.Moodle.env ),
-            nv.fichier = TRUE,
-            creer.titre = TRUE, lg.titre = 30, embellir = TRUE, deja.HTML = FALSE,
-            forcer.multiple = TRUE, melanger.reponses = TRUE, somme.nulle = FALSE,
-            precision = 3,
-            categorie.base = "",
-            dossier.images = dirname( fichier.ods ),
-            sep.images = c( '@@', '@@' ), inserer.images = TRUE,
-            sep.formules = c( '@\\\\$', '\\\\$@' ),
-            sep.SMILES = c( '@\\\\{', '\\\\}@' ),
-            ... )
-
-xlsx.moodle( fichier.xlsx, onglet = NA,
-             colonne.texte  = NA, colonne.reponse = NA,
-             colonne.note   = NA, colonne.note_question = NA,
-             colonne.titre  = NA, colonne.code = NA, colonne.type = NA,
-             colonne.retour = NA, colonne.global = NA, colonne.penalite = NA,
-             colonne.temps  = NA, colonne.decimale = NA,
-             fichier.xml = if ( TRUE == nv.fichier ) gsub( "\\\\.[Xx][Ll][Ss][Xx]$",
-                                                           ".xml",
-                                                           fichier.xlsx )
-                           else get( "fichier.xml", envir = SARP.Moodle.env ),
-             nv.fichier = TRUE,
-             creer.titre = TRUE, lg.titre = 30, embellir = TRUE, deja.HTML = FALSE,
-             forcer.multiple = TRUE, melanger.reponses = TRUE, somme.nulle = FALSE,
-             precision = 3,
-             categorie.base = "",
-             dossier.images = dirname( fichier.xlsx ),
-             sep.images = c( '@@', '@@' ), inserer.images = TRUE,
-             sep.formules = c( '@\\\\$', '\\\\$@' ),
-             sep.SMILES = c( '@\\\\{', '\\\\}@' ),
-             ... )
+           nom.fichier = deparse( substitute( d ) ) )
 }
 \arguments{
-  \item{fichier.csv, fichier.ods, fichier.xlsx}{
-    Un vecteur de chaînes de caractères contenant les noms des fichiers
-    à convertir. Chacun des fichiers est traité indépendamment, mais
-    avec les mêmes valeurs des options qui suivent.
+  \item{d}{
+    La data.frame à convertir.
   }
-
-  \item{onglet}{
-    Le numéro, ou le nom, de la feuille (onglet) du classeur LibreOffice
-    ou Excel à convertir. S'il n'est pas indiqué, toutes les feuilles
-    seront converties.
-  }
-
-  \item{colonne.texte}{
-    Le nom ou le numéro de la colonne qui contient l'énoncé des
-    questions.
-  }
+  
+  \item{colonne.texte}{ Le nom ou le numéro de la colonne qui contient
+    l'énoncé des questions. Si elle n'est pas indiquée, une colonne
+    intitulée « Texte » est cherchée dans le fichier. Cette colonne est
+    obligatoire.  }
+  
   \item{colonne.reponse}{
     Le nom ou le numéro de la colonne qui contient la ou les réponses
-    aux questions.
+    aux questions. Si elle n'est pas indiquée, une colonne
+    intitulée « Réponse » est cherchée dans le fichier. Cette colonne est
+    obligatoire. 
   }
-  \item{colonne.note}{
-    Le nom ou le numéro de la colonne qui contient la note associée à
-    chaque réponse. Si elle n'est pas indiquée, une colonne intitulée «
-      Note » (insensible à la casse) est cherchée dans le fichier. Cette
-    colonne est obligatoire en cas de question à réponses
-    multiples. Elle peut alors contenir soit le pourcentage de la note
-    (voir les détails), soit « Vrai » ou « Faux » (insensible à la
-    casse) et les pourcentages sont calculés en conséquence (avec
-    toujours 0 pour « Faux »: indiquez explicitement un pourcentage
-    négatif si nécessaire). 
-  }
+  
+  \item{colonne.note}{ Le nom ou le numéro de la colonne qui contient la
+    note associée à chaque réponse. Si elle n'est pas indiquée, une
+    colonne intitulée « Note » (insensible à la casse) est cherchée dans
+    le fichier. Cette colonne est obligatoire en cas de question à
+    réponses multiples. Elle peut alors contenir soit le pourcentage de
+    la note (voir les détails), soit « Vrai » ou « Faux » (insensible à
+    la casse) et les pourcentages sont calculés en conséquence (avec
+    toujours 0 pour « Faux » : indiquez explicitement un pourcentage
+    négatif si nécessaire).  }
   
   \item{colonne.note_question}{ Le nom ou le numéro de la colonne qui
     contient la note globale de la question. Si elle n'est pas indiquée,
@@ -169,7 +111,10 @@ xlsx.moodle( fichier.xlsx, onglet = NA,
   }
 
   \item{colonne.temps}{ Le nom ou le numéro de la colonne qui contient
-    le temps conseillé pour la question. Cette colonne est facultative.
+    le temps conseillé pour la question. Cette colonne est
+    facultative.  Lorsqu'elle est présente, et renseignée, un texte
+    indiquant le temps conseillé pour répondre est ajouté à l'énoncé de
+    la question.
   }
 
   \item{colonne.decimale}{ Le nom ou le numéro de la colonne qui contient
@@ -177,19 +122,10 @@ xlsx.moodle( fichier.xlsx, onglet = NA,
     question (pour les questions numériques uniquement). Cette colonne
     est facultative.  }
 
-  \item{fichier.xml}{
-    Le nom du fichier XML à créer ou un fichier XML déjà créé avec
-    \code{\link{debuter_xml.moodle}}. Par
-    défaut, la fonction crée un fichier de même nom que le premier
-    fichier fourni, en remplaçant l'extension \code{.csv} par
-    \code{.xml}.
-  }
+  \item{fichier.xml}{ Le nom du fichier XML, créé avec
+    \code{\link{debuter_xml.moodle}}, dans lequel créer les questions
+    que contient la data.frame.  }
   
-  \item{nv.fichier}{
-    Une valeur logique indiquant si l'on veut créer un nouveau fichier
-    (\code{TRUE}) ou utiliser un fichier XML déjà ouvert avec
-    \code{\link{debuter_xml.moodle}} (\code{FALSE})
-  }
   \item{creer.titre}{
     Une valeur logique indiquant si l'on veut créer un titre pour chaque
     question, à partir de son code et du début de son énoncé
@@ -259,29 +195,26 @@ xlsx.moodle( fichier.xlsx, onglet = NA,
   \item{sep.SMILES}{ Les codes servant à encadrer un code SMILES à
     convertir en formule chimique grâce à openbabel dans les textes du
     fichier CSV. }
-  
-  \item{sep, header, quote}{
-    Options pour \code{\link{read.table}}, correspondant au format d'un
-    fichier CSV par défaut lorsqu'il est créé par Libre office ou Excel.
-  }
-  \item{...}{
-    Autres options pour \code{\link{read.table}}, si nécessaire.
-  }
+
+  \item{nom.fichier}{ Le nom à utiliser pour créer les titres et la
+    catégorie de base des questions générées à partir de cette
+    data.frame. }
 }
 \details{
+  Cette fonctions réalise la conversion d'une data.frame
+  de questions pour Moodle en un fichier XML. La nature des questions
+  est déduite de la structure de la data.frame.
 
-  Ces fonctions réalisent la conversion d'un ou plusieurs fichiers
-  structurés de questions pour Moodle en un fichier XML. La nature des
-  questions est déduite de la structure du fichier.  Le fichier peut
-  être au format CSV (format recommandé), Libre Office Calc (ODS) ou
-  Excel (XLSX). Dans les deux derniers cas, il est possible de convertir
-  toutes les feuilles du classeur ou juste une partie. Chaque feuille à
-  convertir doir avoir la structure décrite ci-après, correspondant au
-  format du fichier CSV.
-
-  Le fichier doit comporter au moins deux colonnes : l'une avec les
-  énoncés des questions et l'autre avec les réponses. Chaque ligne
+  Cette data.frame doit comporter au moins deux colonnes : l'une avec
+  les énoncés des questions et l'autre avec les réponses. Chaque ligne
   correspond à une réponse possible.
+
+  S'il y a un énoncé, mais pas de réponse, cet énoncé est supposé être
+  une indication de catégorie (sauf si la question a le même code qu'une
+  question « cloze », voir plus loin, ou si la colonne précisant le type
+  de question indique un type particulier) qui sera créée comme une
+  sous-catégorie de la catégorie de base, par un appel à
+  \code{\link{categorie.moodle}}.
 
   Pour les questions simples, la question tient sur une ligne. La nature
   de la question est déduite de la réponse. Si la réponse peut être
@@ -294,24 +227,7 @@ xlsx.moodle( fichier.xlsx, onglet = NA,
   et « Faux »; elle sera créée avec un appel à
   \code{\link{vrai_faux.moodle}}.  Dans tous les autres cas, la question
   est supposée être à réponse ouverte et courte et sera créée par un
-  appel à \code{\link{qroc.moodle}}. Par défaut, la réponse est sensible
-  à la casse; cela peut être modifié en indiquant « I » dans la colonne
-  précisant le type de question.
-
-  S'il y a un énoncé, mais pas de réponse, cet énoncé est supposé être
-  une indication de catégorie (sauf si la question a le même code qu'une
-  question « cloze », voir plus loin, ou si la colonne précisant le type
-  de question indique un type particulier) qui sera créée comme une
-  sous-catégorie de la catégorie de base, par un appel à
-  \code{\link{categorie.moodle}}.  Si une colonne précise le type, la
-  question peut être de type rédactionnel (réponse libre dans un éditeur
-  de texte, pas de correction automatique; type « R »,
-  \code{\link{question_ouverte.moodle}}), description (un texte
-  s'affiche, mais aucune réponse n'est attendue; type « D »,
-  \code{\link{description.moodle})} ou texte à trou (il faudra replacer
-  les textes dans les trous de l'énoncé, les trous étant construits à
-  partir des termes encadrés par des [[doubles crochets]]); type « T »,
-  \code{\link{glisser_textes.moodle}})
+  appel à \code{\link{qroc.moodle}}.
 
   S'il y a une réponse, mais pas d'énoncé, cette réponse est supposée
   être une autre réponse possible à une question à choix multiple, dont
@@ -407,9 +323,6 @@ xlsx.moodle( fichier.xlsx, onglet = NA,
   Les fonctions de base de création de questions pour plus de souplesse,
   et en particulier pour créer des questions non gérées par le format de
   fichier ci-dessus.
-
-  \code{\link{csv_optique.moodle}} pour convertir des fichiers CSV au
-  format utilisé par les lecteurs optiques.
 }
 
 \author{

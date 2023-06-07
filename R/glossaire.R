@@ -5,9 +5,12 @@
 ## Fonctions permettant la création d'un glossaire 
 ## ─────────────────────────────────────────────────────────────────
 ## Historique
-##   31   juillet  2016 : création du fichier
-##    1er novembre 2016 : les balises doivent être en majuscule…
+##   31   juillet  2016 : création du fichier
+## 
+##    1er novembre 2016 : les balises doivent être en majuscule…
 ##                        création depuis un fichier CSV
+##
+##   18   mai      2023 : conversion stop → erreur
 ## ─────────────────────────────────────────────────────────────────
 
 creer_glossaire.moodle <- function( nom.fichier, nom.glossaire, texte.intro,
@@ -93,28 +96,32 @@ csv_glossaire.moodle <- function( fichier.csv,
     ##                                        renvoie « TRUE » si non-spécifié sur la ligne de commande...]
     if ( all( FALSE == is.character( fichier.xml ),
               FALSE == ( "file" %in% ( fichier.xml ) ) ) ) {
-        stop( "Le fichier XML doit \u00eatre un nom de fichier \u00e0 cr\u00e9er",
-              " ou un fichier d\u00e9j\u00e0 ouvert par creer_glossaire.moodle" )
+        erreur( 17, "csv_glossaire.moodle",
+                "Le fichier XML doit \u00eatre un nom de fichier \u00e0 cr\u00e9er",
+                " ou un fichier d\u00e9j\u00e0 ouvert par creer_glossaire.moodle" )
     }
 
     ## On harmonise les colonnes absentes : NA
     if ( any( is.na( colonne.terme ), is.null( colonne.terme ),
               ( is.integer( colonne.terme ) && ( colonne.terme < 1 ) ),
               ( is.character( colonne.terme ) && ( nchar( colonne.terme ) < 1 ) ) ) ) {
-        stop( "Vous devez indiquer quelle colonne contient les mots \u00e0 d\u00e9finir" )
+        erreur( 2000, "csv_glossaire.moodle",
+                "Vous devez indiquer quelle colonne contient les mots \u00e0 d\u00e9finir" )
     }
 
     if ( any( is.na( colonne.definition ), is.null( colonne.definition ),
               ( is.integer( colonne.definition ) && ( colonne.definition < 1 ) ),
               ( is.character( colonne.definition ) && ( nchar( colonne.definition ) < 1 ) ) ) ) {
-        stop( "Vous devez indiquer quelle colonne contient les d\u00e9finitions" )
+        erreur( 2001, "csv_glossaire.moodle",
+                "Vous devez indiquer quelle colonne contient les d\u00e9finitions" )
     }
 
     ## Si demandé : on crée le fichier XML
     if ( TRUE == nv.fichier ) {
         if ( any( is.na( fichier.xml ), length( fichier.xml ) != 1,
                   FALSE == is.character( fichier.xml ), nchar( fichier.xml ) < 1 ) ) {
-            stop( "Il faut indiquer un et un seul nom de fichier XML pour la sortie..." )
+            erreur( 7, "csv_glossaire.moodle",
+                    "Il faut indiquer un et un seul nom de fichier XML pour la sortie..." )
         }
 
         fichier.xml <- creer_glossaire.moodle( nom.fichier = fichier.xml,
@@ -179,7 +186,8 @@ csv_vers_glossaire <- function( fichier.csv,
     
     ## On vérifie qu'il n'y a pas de doublons
     if ( any( duplicated( na.omit( c( colonne.terme, colonne.def ) ) ) ) ) {
-        stop( "Une m\u00eame colonne ne peut pas servir \u00e0 deux informations distinctes !" )
+        erreur( 1002, "csv_vers_glossaire",
+                "Une m\u00eame colonne ne peut pas servir \u00e0 deux informations distinctes !" )
     }
 
     ## On remplace les textes vides par des NA, plus faciles à repérer

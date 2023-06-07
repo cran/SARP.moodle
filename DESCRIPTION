@@ -1,8 +1,8 @@
 Package: SARP.moodle
 Type: Package
 Title: XML Output Functions for Easy Creation of Moodle Questions
-Version: 0.9.1
-Date: 2022-11-22
+Version: 1.0.4
+Date: 2023-05-31
 Authors@R: c( person( "Emmanuel", "Curis",
                       email = "emmanuel.curis@parisdescartes.fr",
  		      role  = c( "aut", "cre", "cph" ),
@@ -15,15 +15,15 @@ License: Artistic-2.0
 Description: Provides a set of basic functions for creating Moodle XML
  output files suited for importing questions in Moodle (a learning
  management system, see <https://moodle.org/> for more information).
-Suggests:
+Suggests: readODS,openxlsx
 Depends: base64enc
 Imports: stats,utils
 Encoding: UTF-8
 Language: fr
 NeedsCompilation: no
-Packaged: 2022-11-22 14:02:26 UTC; curis
+Packaged: 2023-06-07 18:00:13 UTC; curis
 Author: Emmanuel Curis [aut, cre, cph]
     (<https://orcid.org/0000-0001-8382-1493>),
   Virginie Lasserre [ctb]
 Repository: CRAN
-Date/Publication: 2022-11-22 16:30:02 UTC
+Date/Publication: 2023-06-07 19:00:02 UTC

@@ -23,6 +23,8 @@
 ##    1 janvier 2021 : tag « idnumber » pris en compte (entier)
 ##
 ##    3 juillet 2022 : corrigé la balise pour indiquer le nombre de réponses correctes
+##
+##   18 mai     2023 : conversion stop → erreur et warning → avertissement
 ## ─────────────────────────────────────────────────────────────────
 
 question.moodle <- function( type = "cloze",
@@ -48,15 +50,17 @@ question.moodle <- function( type = "cloze",
             ## Longueurs discordantes...
             if ( 0 == n.fractions ) {
                 ## Aucune fraction indiquée : la première réponse est à 100 %, les autres à 0
-                warning( "Aucune note n'est indiqu\u00e9e pour les r\u00e9ponses.",
-                         " La premi\u00e8re r\u00e9ponse est, arbitrairement,",
-                         " suppos\u00e9e la seule correcte.",
-                         " Toutes les autres ont une note nulle." )
+                avertissement( 450, "question.moodle",
+                               "Aucune note n'est indiqu\u00e9e pour les r\u00e9ponses.",
+                               " La premi\u00e8re r\u00e9ponse est, arbitrairement,",
+                               " suppos\u00e9e la seule correcte.",
+                               " Toutes les autres ont une note nulle." )
                 fractions <- c( 100, rep( 0, n.reponses - 1 ) )
                 n.fractions <- n.reponses
             } else {
                 ## Pas d'automatisation, erreur...
-                stop( "Discordance entre nombre de r\u00e9ponses et nombre de fractions..." )
+                erreur( 22, "question.moodle",
+                        "Discordance entre nombre de r\u00e9ponses et nombre de fractions..." )
             }
         }
 
@@ -72,7 +76,8 @@ question.moodle <- function( type = "cloze",
                 commentaires <- rep( NA, n.reponses )
             } else {
                 ## Pas d'automatisation, erreur...
-                stop( "Discordance entre nombre de r\u00e9ponses et nombre de commentaires..." )
+                erreur( 23, "question.moodle",
+                        "Discordance entre nombre de r\u00e9ponses et nombre de commentaires..." )
             }
         }
 
@@ -103,7 +108,9 @@ question.moodle <- function( type = "cloze",
     if ( length( autres.codes ) > 0 ) {
         nom.codes <- names( autres.codes )
         if ( is.null( nom.codes ) ) {
-            stop( "Vous devez pr\u00e9ciser le nom des codes comme nom de la liste de leur valeur..." )
+            erreur( 24, "question.moodle",
+                    "Vous devez pr\u00e9ciser le nom des codes",
+                    " comme nom de la liste de leur valeur..." )
         }
         for ( i in 1:length( autres.codes ) ) {
             cat( file = fichier.xml, sep = "",
@@ -188,9 +195,10 @@ debut_question.moodle <- function( type,
         ## On vérifie qu'il n'existe pas déjà dans la catégorie...
         lst <- get( "liste.ids", envir = SARP.Moodle.env )
         if( idnum %in% lst ) {
-            stop( "Identifiant num\u00e9rique [", idnum,
-                  "] d\u00e9j\u00e0 attribu\u00e9",
-                  " dans la cat\u00e9gorie en cours." )
+            erreur( 450, "question.moodle",
+                    "Identifiant num\u00e9rique [", idnum,
+                    "] d\u00e9j\u00e0 attribu\u00e9",
+                    " dans la cat\u00e9gorie en cours." )
         }
         lst <- c( lst, idnum )
         assign( "liste.ids", lst, envir = SARP.Moodle.env )
@@ -218,7 +226,8 @@ bloc.reponse_multiple <- function( ordre.aleatoire,
     ## Faut-il tirer au sort l'ordre des réponses ?
     if ( !missing( ordre.aleatoire ) ) {
         if ( length( ordre.aleatoire ) > 1 ) {
-            warning( "ordre.aleatoire de longueur > 1 - seul la premi\u00e8re valeur servira" )
+            avertissement( 3, "bloc.reponse_multiple",
+                           "ordre.aleatoire de longueur > 1 - seul la premi\u00e8re valeur servira" )
             ordre.aleatoire <- ordre.aleatoire[ 1 ]
         }
         if ( is.null( ordre.aleatoire ) ) ordre.aleatoire <- TRUE
@@ -233,15 +242,17 @@ bloc.reponse_multiple <- function( ordre.aleatoire,
     ## Faut-il numéroter ?
     if ( !missing( numerotation ) ) {
         if ( length( numerotation ) > 1 ) {
-            warning( "numerotation de longueur > 1 - seul la premi\u00e8re valeur servira" )
+            avertissement( 4, "bloc.reponse_multiple",
+                           "numerotation de longueur > 1 - seul la premi\u00e8re valeur servira" )
             numerotation <- numerotation[ 1 ]
         }
         if ( is.null( numerotation ) ) numerotation <- "none"
         if ( is.na( numerotation ) ) numerotation <- "none"
         
         if ( !( numerotation %in% c( 'ABC', '123', 'abc', 'iii', 'III', 'none' ) ) ) {
-            warning( "Code de num\u00e9rotation inconnu - ", numerotation,
-                     " - ignor\u00e9" )
+            avertissement( 451, "bloc.reponse_multiple",
+                           "Code de num\u00e9rotation inconnu - ", numerotation,
+                           " - ignor\u00e9." )
             numerotation <- "none"
         }
 
@@ -254,7 +265,8 @@ bloc.reponse_multiple <- function( ordre.aleatoire,
     ## Faut-il indiquer le nombre de réponses correctes ?
     if ( !missing( montrer.nombre.correct ) ) {
         if ( length( montrer.nombre.correct ) > 1 ) {
-            warning( "montrer.nombre.correct de longueur > 1 - seul la premi\u00e8re valeur servira" )
+            avertissement( 5, "bloc.reponse_multiple",
+                           "montrer.nombre.correct de longueur > 1 - seul la premi\u00e8re valeur servira" )
             montrer.nombre.correct <- montrer.nombre.correct[ 1 ]
         }
         if ( is.null( montrer.nombre.correct ) ) montrer.nombre.correct <- TRUE

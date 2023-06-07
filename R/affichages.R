@@ -16,6 +16,9 @@
 ##   13 juin 2020 : affichage de plusieurs échantillons de valeurs
 ##
 ##   26 fév. 2021 : correction de caractères spéciaux mal reconnus / CRAN
+##
+##   18 mai  2023 : erreurs avec stop converties avec erreur()
+##                  alertes avec warning converties avec avertissement()
 ## ——————————————————————————————————————————————————————————————————————
 
 ######################################################################
@@ -33,8 +36,9 @@ afficher_nombre.moodle <- function( x,
                         "\">&empty;</span>" ) )
     }
     if ( length( x ) > 1 ) {
-        warning( "Attention, seule la premi\u00e8re valeur sera convertie,",
-                 " les autres seront ignor\u00e9es..." )
+        avertissement( 1, "afficher_nombre.moodle",
+                       "Attention, seule la premi\u00e8re valeur sera convertie,",
+                       " les autres seront ignor\u00e9es..." )
         x <- x[ 1 ]
     }
 
@@ -226,12 +230,14 @@ afficher_poly.moodle <- function( degre, variable = "x", a, ... )
     ## Contrôles initiaux
     degre <- as.integer( degre )    # Le degré est forcément entier...
     if ( degre < 0 ) {
-        stop( "Degr\u00e9 absurde demand\u00e9 [", degre, "]" )
+        erreur( 500, "afficher_poly.moodle",
+                "Degr\u00e9 absurde demand\u00e9 [", degre, "]" )
     }
 
     if ( length( a ) != degre + 1 ) {
-        stop( "Polynome de degr\u00e9 ", degre,
-              " : il faut ", degre + 1, " coefficients - ", length( a ), " fournis" )
+        erreur( 501, "afficher_poly.moodle",
+                "Polyn\u00f4me de degr\u00e9 ", degre,
+                " : il faut ", degre + 1, " coefficients - ", length( a ), " fournis" )
     }
 
     ## Degré 0 : une constante

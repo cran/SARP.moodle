@@ -9,15 +9,18 @@
 ##
 ##   24 mars    2020 : essai de protection contre le double codage
 ##                      de la même image interne dans un texte donné
+##
+##   18 mai     2023 : stop → erreur
 ## —————————————————————————————————————————————————————————————————
 
 coder.texte <- function( texte, ajouter.images = TRUE, proteger.balises = FALSE,
                          balise.CDATA = TRUE,
                          indentation = 2, fichier.xml ) {
     if ( length( texte ) > 1 ) {
-        stop( "Le texte pass\u00e9 n'est pas unique.",
-              " Probl\u00e8me de codage ant\u00e9rieur !\n",
-              texte )
+        erreur( 2, "coder.texte",
+                "Le texte pass\u00e9 n'est pas unique.",
+                " Probl\u00e8me de codage ant\u00e9rieur !\n",
+                texte )
     }
     blanc <- paste0( rep( " ", indentation ), collapse = "" )
     ## Le préambule

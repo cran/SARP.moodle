@@ -18,6 +18,10 @@
 ##   19 avril   2020 : dossier local d'image paramétrable
 ##
 ##    1 janvier 2021 : liste des identifiants numériques de questions
+##
+##   18 mai     2023 : initialisation du code de dernière erreur
+##                     initialisation de la liste des avertissements
+##                     on affiche, à la fin, en cas d'erreurs ou d'avertissements
 ## ─────────────────────────────────────────────────────────────────
 
 # L'environnement local
@@ -53,10 +57,18 @@ debuter_xml.moodle <- function( fichier.xml,   # Le nom du fichier XML à créer
                                 racine = 2004197487,
                                 glossaire = FALSE # TRUE si on veut créer un glossaire
                               ) {
+    ## Initialisation des codes d'erreur
+    assign( "code.erreur"         , integer(), envir = SARP.Moodle.env )
+    assign( "liste.avertissements", integer(), envir = SARP.Moodle.env )
+
     ## Contrôles
-    if ( any( length( fichier.xml ) != 1, is.character( fichier.xml ) == FALSE, nchar( fichier.xml ) < 1 ) ) {
-        stop( "fichier.xml doit \u00eatre un vecteur de type cha\u00eene de caract\u00e8res, ",
-              "contenant un seul \u00e9l\u00e9ment" )
+    if ( any( length( fichier.xml ) != 1,
+              is.character( fichier.xml ) == FALSE,
+              nchar( fichier.xml ) < 1 ) ) {
+        erreur( 1, "debuter_xml.moodle",
+                "fichier.xml doit \u00eatre un vecteur",
+                " de type cha\u00eene de caract\u00e8res, ",
+                "contenant un seul \u00e9l\u00e9ment" )
     }
 
     ## On réinitialise le compteur des figures
@@ -121,4 +133,17 @@ finir_xml.moodle <- function( fichier.xml = get( "fichier.xml", envir = SARP.Moo
     ## On remet les options comme elles étaient
     vx.options <- get( "vieilles.options", envir = SARP.Moodle.env )
     options( vx.options )
+    
+    ## On fait un compte-rendu
+    numero <- get( "code.erreur", envir = SARP.Moodle.env )
+    if ( length( numero ) > 0 ) {
+        message( "Une erreur pendant la g\u00e9n\u00e9ration - code ", numero )
+    }
+
+    avertissements <- get( "liste.avertissements", envir = SARP.Moodle.env )
+    if ( length( avertissements ) > 0 ) {
+        message( length( avertissements ), " avertissement",
+                 if ( length( avertissements ) > 1 ) "s",
+                 " pendant la g\u00e9n\u00e9ration." )
+    }
 }

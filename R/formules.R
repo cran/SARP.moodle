@@ -16,6 +16,8 @@
 ##
 ##   20 mai  2020 : pour latex, possibilité de le faire via le filtre Moodle
 ##                    plutôt que par une image
+##
+##   18 mai   2023 : conversion stop → erreur
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -158,8 +160,9 @@ formule.LaTex <- function( formule, marge, displaystyle, couleurs, enjoliver,
     code <- system( commande, ignore.stdout = TRUE, ignore.stderr = TRUE,
                     wait = TRUE )
     if ( code != 0 ) {
-        stop( "Erreur dans la g\u00e9n\u00e9ration du DVI ou de l'image\n",
-              "Formule : ", formule )
+        erreur( 550, "formule.LaTex",
+                "Erreur dans la g\u00e9n\u00e9ration du DVI ou de l'image\n",
+                "Formule : ", formule )
     }
 ##            show.output.on.console = FALSE ) [Windows seulement]
 
@@ -254,8 +257,9 @@ inserer_SMILES.moodle <- function( code.SMILES, nom.molecule = code.SMILES,
     code <- system( commande, ignore.stdout = TRUE, ignore.stderr = FALSE,
                     wait = TRUE )
     if ( code != 0 ) {
-        stop( "Erreur dans la g\u00e9n\u00e9ration de l'image\n",
-              "Formule : ", code.SMILES )
+        erreur( 600, "inserer_SMILES.moodle",
+                "Erreur dans la g\u00e9n\u00e9ration de l'image\n",
+                "Formule : ", code.SMILES )
     }
 ##            show.output.on.console = FALSE ) [Windows seulement]
 
@@ -268,8 +272,9 @@ inserer_SMILES.moodle <- function( code.SMILES, nom.molecule = code.SMILES,
         code <- system( commande, ignore.stdout = TRUE, ignore.stderr = TRUE,
                         wait = TRUE )
         if ( code != 0 ) {
-            stop( "Erreur dans le rognage de l'image\n",
-                  "Formule : ", code.SMILES )
+            erreur( 601, "inserer_SMILES.moodle",
+                    "Erreur dans le rognage de l'image\n",
+                    "Formule : ", code.SMILES )
         }
     }
     

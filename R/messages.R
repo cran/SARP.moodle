@@ -15,6 +15,9 @@
 ##
 ##    3 juil 2022 : si temps NULL, manquant : on utilisse le temps de catégorie
 ##                  si NA, en revanche, on ignore ce temps de catégorie
+##
+##    9 avr. 2023 : corrigé la détection du temps sous la forme « xx m yy »
+##                  prise en compte de l'apostrophe UTF-8, utilisée dans Libre Office
 ## ——————————————————————————————————————————————————————————————————————
 
 ## ——————————————————————————————————————————————————————————————————————
@@ -70,6 +73,7 @@ temps_necessaire.moodle <- function( temps, couleur = "Blue",
         temps <- gsub( "min", "m", fixed = TRUE, temps )
         temps <- gsub( "mn" , "m", fixed = TRUE, temps )
         temps <- gsub( "'"  , "m", fixed = TRUE, temps )
+        temps <- gsub( "\u2019", "m", fixed = TRUE, temps )
 
         temps <- gsub( "sec", "s", fixed = TRUE, temps )
         temps <- gsub( "\"" , "s", fixed = TRUE, temps )
@@ -106,10 +110,10 @@ temps_necessaire.moodle <- function( temps, couleur = "Blue",
             if ( is.na( x ) ) {
                 ## Il reste donc des caractères...
                 if ( grepl( "h", fixed = TRUE, temps ) ) {
-                    tps <- strsplit( temps, "h", fixed = TRUE )[[ 1 ]]
+                    tps <- strsplit( temps, split = "h", fixed = TRUE )[[ 1 ]]
                     tps.h <- tps[ 1 ]
                     if ( length( tps ) > 1 ) {
-                        tps <- strsplit( tps[ 2 ], "m", fixed = TRUE )[[ 1 ]]
+                        tps <- strsplit( tps[ 2 ], split = "m", fixed = TRUE )[[ 1 ]]
                         tps.m <- tps[ 1 ]
                         if ( length( tps ) > 1 ) {
                             tps.s <- tps[ 2 ]
@@ -121,7 +125,7 @@ temps_necessaire.moodle <- function( temps, couleur = "Blue",
                         tps.s <- 0
                     }
                 } else {
-                    tps <- strsplit( "m", fixed = TRUE, temps )[[ 1 ]]
+                    tps <- strsplit( temps, split = "m", fixed = TRUE )[[ 1 ]]
                     tps.h <- 0
                     tps.m <- tps[ 1 ]
                     if ( length( tps ) > 1 ) {

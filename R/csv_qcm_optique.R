@@ -9,6 +9,9 @@
 ##   27 avril 2020 : création du fichier
 ##
 ##   10 déc.  2020 : corrigé l'oubli de l'option  « quote = »
+##
+##   18 mai   2023 : conversion stop → erreur
+##                   utilisation de la fonction de vérification
 ## ─────────────────────────────────────────────────────────────────
 
 csv_optique.moodle <- function( fichier.csv,
@@ -25,41 +28,20 @@ csv_optique.moodle <- function( fichier.csv,
                                 sep = ";", header = TRUE, quote = '"', 
                                 ... )
 {
-    ## Vérification : fichier XML
-    ##   [On ne peut pas utiliser « missing » pour les colonnes avec une valeur par défaut :
-    ##                                        renvoie « TRUE » si non-spécifié sur la ligne de commande...]
-    if ( all( FALSE == is.character( fichier.xml ),
-              FALSE == ( "file" %in% class( fichier.xml ) ) ) ) {
-        stop( "Le fichier XML doit \u00eatre un nom de fichier \u00e0 cr\u00e9er",
-              " ou un fichier d\u00e9j\u00e0 ouvert par debuter_xml.moodle" )
-    }
-
-        
-    ## On contrôle le dossier d'images
-    if ( !is.logical( inserer.images ) ) {
-        stop( "inserer.images doit valoir TRUE ou FALSE" )
-    }
-    if ( length( inserer.images ) != 1 ) {
-        stop( "inserer.images ne doit avoir qu'une seule valeur, TRUE ou FALSE" )
-    }
-    
-    if ( length( dossier.images ) > 1 ) {
-        stop( "Un seul dossier contenant les images",
-              " doit \u00eatre sp\u00e9cifi\u00e9" )
-    }
-    if ( length( dossier.images ) == 1 ) {
-        if ( FALSE == dir.exists( dossier.images ) ) {
-            stop( "Le dossier d'images indiqu\u00e9 n'existe pas." )
-        }
-    }
+    ## Vérifications
+    verification_conversions( fichier.xml = fichier.xml, nv.fichier = nv.fichier,
+                              inserer.images = inserer.images,
+                              dossier.images = dossier.images,
+                              fonction = "csv_optique.moodle" )
 
     ## On contrôle les séparateurs d'images
     if ( length( sep.images ) == 1 ) {
         sep.images <- c( sep.images, sep.images )
     }
     if ( length( sep.images ) > 2 ) {
-        stop( "Il faut deux s\u00e9parateurs d'image au plus :",
-              " pour le d\u00e9but et pour la fin." )
+        erreur( 9, "csv_optique.moodle",
+                "Il faut deux s\u00e9parateurs d'image au plus :",
+                " pour le d\u00e9but et pour la fin." )
     }
 
     ## On contrôle les séparateurs de formules
@@ -67,8 +49,9 @@ csv_optique.moodle <- function( fichier.csv,
         sep.formules <- c( sep.formules, sep.formules )
     }
     if ( length( sep.formules ) > 2 ) {
-        stop( "Il faut deux s\u00e9parateurs de formule au plus :",
-              " pour le d\u00e9but et pour la fin." )
+        erreur( 10, "csv_optique.moodle",
+                "Il faut deux s\u00e9parateurs de formule au plus :",
+                " pour le d\u00e9but et pour la fin." )
     }
 
     ## On contrôle les séparateurs de codes SMILES
@@ -76,8 +59,9 @@ csv_optique.moodle <- function( fichier.csv,
         sep.SMILES <- c( sep.SMILES, sep.SMILES )
     }
     if ( length( sep.SMILES ) > 2 ) {
-        stop( "Il faut deux s\u00e9parateurs de code SMILES au plus :",
-              " pour le d\u00e9but et pour la fin." )
+        erreur( 11, "csv_optique.moodle",
+                "Il faut deux s\u00e9parateurs de code SMILES au plus :",
+                " pour le d\u00e9but et pour la fin." )
     }
 
     
@@ -85,7 +69,8 @@ csv_optique.moodle <- function( fichier.csv,
     if ( TRUE == nv.fichier ) {
         if ( any( is.na( fichier.xml ), length( fichier.xml ) != 1,
                   FALSE == is.character( fichier.xml ), nchar( fichier.xml ) < 1 ) ) {
-            stop( "Il faut indiquer un et un seul nom de fichier XML pour la sortie..." )
+            erreur( 7, "csv_optique.moodle",
+                    "Il faut indiquer un et un seul nom de fichier XML pour la sortie..." )
         }
 
         fichier.xml <- debuter_xml.moodle( fichier.xml )
@@ -138,7 +123,8 @@ csv.qcm_optique_vers_XML <- function( fichier.csv, fichier.xml,
 {
     ## Vérification : fichier CSV
     if ( FALSE == file.exists( fichier.csv ) ) {
-        stop( "Fichier CSV inexistant [", fichier.csv, "]" )
+        erreur( 100, "csv.qcm_optique_vers_XML",
+                "Fichier inexistant [", fichier.csv, "]" )
     }
 
     ## On charge le fichier
@@ -148,11 +134,13 @@ csv.qcm_optique_vers_XML <- function( fichier.csv, fichier.xml,
     cat( "\n Nombre de questions d\u00e9tect\u00e9 : ",
          ncol( d ) - 1 )
     if ( ncol( d ) < 2 ) {
-        stop( "Fichier CSV sans question ? (une colonne seulement...)" )
+        erreur( 1500, "csv.qcm_optique_vers_XML",
+                "Fichier CSV sans question ? (une colonne seulement...)" )
     }
     
     if ( nrow( d ) < 4 ) {
-        stop( "Fichier CSV sans question ? (deux lignes seulement...)" )
+        erreur( 1501, "csv.qcm_optique_vers_XML",
+                "Fichier CSV sans question ? (deux lignes seulement...)" )
     }
     
     ## On indique la catégorie : base + nom du fichier…

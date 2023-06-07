@@ -27,6 +27,8 @@
 ##                  possibilité d'étiquettes sans zone associée dans le glisser-déposer sur image
 ##
 ##    3 jui. 2022 : adaptation pour utiliser le temps de catégorie
+##
+##   18 mai   2023 : conversion stop → erreur
 ## —————————————————————————————————————————————————————————————————
 
 ## —————————————————————————————————————————————————————————————————
@@ -116,7 +118,9 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
 
     ## On crée l'image de fond
     if ( FALSE == file.exists( fichier.image ) ) {
-        stop( "Fichier d'image de fond inexistant !" )
+        erreur( 102, "glisser_deposer.moodle",
+                "Fichier d'image de fond inexistant !",
+                " [", fichier.image, "]" )
     }
     cat( file = fichier.xml, sep = "",
          "    <file name=\"", gsub( "^.*/", "", fichier.image ),
@@ -127,17 +131,20 @@ glisser_deposer.moodle <- function( texte, titre = "Glisser-d\u00e9poser...",
     ## Combien de zones ?
     n.zones <- length( x.zones )
     if ( length( y.zones ) != n.zones ) {
-        stop( "Pas autant de X que de Y !" )
+        erreur( 12, "glisser_deposer.moodle",
+                "Pas autant de X que de Y !" )
     }
     if ( length( txt.zones ) != n.zones ) {
-        stop( "Pas autant de textes que de coordonn\u00e9es !" )
+        erreur( 13, "glisser_deposer.moodle",
+                "Pas autant de textes que de coordonn\u00e9es !" )
     }
 
     if ( 1 == length( zone.unique ) ) {
         zone.unique <- rep( zone.unique, n.zones )
     }
     if ( length( zone.unique )!= n.zones ) {
-        stop( "Pas autant d'indicateurs d'unicit\u00e9 que de coordonn\u00e9es !" )
+        erreur( 14, "glisser_deposer.moodle",
+                "Pas autant d'indicateurs d'unicit\u00e9 que de coordonn\u00e9es !" )
     }
     
     ## On crée les éléments de réponse
@@ -290,7 +297,9 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
     
     ## On crée l'image de fond
     if ( FALSE == file.exists( fichier.image ) ) {
-        stop( "Fichier d'image de fond inexistant !" )
+        erreur( 12, "legender_image.moodle",
+                "Fichier d'image de fond inexistant !",
+                " [", fichier.image, "]" )
     }
     cat( file = fichier.xml, sep = "",
          "    <file name=\"", gsub( "^.*/", "", fichier.image ),
@@ -343,8 +352,9 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
 #            zone$Marque[ 1 ] <- marques$Marque[ zone$Marque[ 1 ] ]
         }
         if ( num.marque > nrow( marques ) ) {
-            stop( "Marque voulue : ", num.marque,
-                  " mais seulement ", nrow( marques ), " d\u00e9finies" )
+            erreur( 15, "legender_image.moodle", 
+                    "Marque voulue : ", num.marque,
+                    " mais seulement ", nrow( marques ), " d\u00e9finies" )
         }
         
   #      num.marque <- which( marques$Marque == zone$Marque[ 1 ] )
@@ -386,7 +396,8 @@ legender_image.moodle <- function( texte, titre = "L\u00e9gender...",
                                            zone$Coord$Hauteur[ 1 ], collapse = "" ),
                      "polygon"   = paste0( paste0( zone$Coord$X, ",", zone$Coord$Y ),
                                            collapse = ";" ),
-                     stop( "Type de forme inconnu [", type, "]" ) ),
+                     erreur( 200, "legender_image.moodle",
+                             "Type de forme inconnu [", type, "]" ) ),
              "</coords>\n" )
 
         ## La réponse qui va avec        
@@ -420,7 +431,8 @@ glisser_textes.moodle <- function( texte, titre = "Glisser les textes...",
 
     n.zones <- length( zones ) - 1
     if ( n.zones < 1 ) {
-        stop( "Aucune zone d\u00e9finie dans le texte" )
+        erreur( 201, "glisser_textes.moodle",
+                "Aucune zone d\u00e9finie dans le texte" )
     }
 
     txt.zones <- gsub( "(.*)\\]\\].*$", "\\1", zones[ -1 ] )
@@ -462,7 +474,8 @@ glisser_textes.moodle <- function( texte, titre = "Glisser les textes...",
         infini <- rep( infini, n.zones )
     }
     if ( length( infini ) != n.zones ) {
-        stop( "Pas autant d'indications \"Infini\" que de zones de texte" )
+        erreur( 16, "glisser_textes.moodle",
+                "Pas autant d'indications \"Infini\" que de zones de texte" )
     }
     
     ## On crée les étiquettes à déplacer

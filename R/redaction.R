@@ -12,7 +12,9 @@
 ##
 ##   1 jui. 2020 : correction de deux coquilles
 ##
-##    3 jui. 2022 : adaptation pour utiliser le temps de catégorie
+##   3 jui. 2022 : adaptation pour utiliser le temps de catégorie
+##
+##  18 mai  2023 : conversion stop → erreur
 ## ─────────────────────────────────────────────────────────────────
 
 ## ─────────────────────────────────────────────────────────────────
@@ -51,7 +53,8 @@ question_ouverte.moodle <- function( texte,
                        'Texte' = "plain",
                        'Chasse fixe' = "monospaced",
                        'Aucun' = "noinline",
-                       stop( "Type d'\u00e9diteur de texte inconnu" ) )
+                       erreur( 400, "question_ouverte.moodle",
+                               "Type d'\u00e9diteur de texte inconnu" ) )
     cat( file = fichier.xml, sep = "",
          "   <responseformat>", editeur, "</responseformat>\n" )
 

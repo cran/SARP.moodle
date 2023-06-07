@@ -12,7 +12,8 @@
   questions Moodle (texte, mais aussi réponses).
 }
 \usage{
-definir_dossier.image.moodle( URL, local = FALSE )
+definir_dossier.image.moodle( URL, local = FALSE, ajouter = TRUE,
+                              silencieux = FALSE )
 
 lier_image.moodle( nom.image, largeur = -1, hauteur = -1,
                    description = NULL, interne = FALSE )
@@ -29,7 +30,14 @@ coder_image.moodle( nom.image,
     élément.}
 
   \item{local}{ Précise si l'URL indiquée est locale (\code{TRUE}) ou
-    sur le serveur Moodle (\code{FALSE}) }.
+    sur le serveur Moodle (\code{FALSE}). }
+
+  \item{ajouter}{ Pour une URL locale, indique elle doit être ajoutée à
+    la liste des dossiers de recherche des fichiers (\code{TRUE}) ou
+    remplacer cette liste (\code{FALSE}). }
+
+  \item{silencieux}{ Si \code{TRUE}, les messages indiquant les URL
+    enregistrées sont supprimés.}
 
   \item{nom.image}{Le nom du fichier contenant l'image. Si l'image est
     externe au fichier XML, ce doit être le nom tel qu'il apparaîtra
@@ -37,15 +45,15 @@ coder_image.moodle( nom.image,
     peut faire Moodle lors de l'import d'un fichier... Ce doit être un
     vecteur de type \code{character} contenant un seul élément. }
 
-  \item{dossier.image}{Le nom du dossier contenant l'image, en local.}
+  \item{dossier.image}{Le nom du dossier contenant l'image, en local. }
 
   \item{largeur, hauteur}{ Les dimensions d'affichage de l'image dans la
-  question (équivalent des champs \code{height} et \code{width} de la
-  balise \code{<img>}). Seules les dimensions numériques, finies,
-  positives sont prises en compte. Toutes les autres valeurs sont
-  ignorées et le champ correspondant n'est pas créé dans le code
-  HTML. Ces deux valeurs doivent être des vecteurs numériques contenant
-  un seul élément.}
+    question (équivalent des champs \code{height} et \code{width} de la
+    balise \code{<img>}). Seules les dimensions numériques, finies,
+    positives sont prises en compte. Toutes les autres valeurs sont
+    ignorées et le champ correspondant n'est pas créé dans le code
+    HTML. Ces deux valeurs doivent être des vecteurs numériques
+    contenant un seul élément.}
 
   \item{description}{ Un vecteur de chaîne de caractère, ne contenant
     qu'un seul élément. S'il existe, ce texte sera utilisé comme
@@ -67,7 +75,7 @@ coder_image.moodle( nom.image,
   Pour une image extérieure au fichier XML, la racine, définie avec la
   fonction \code{definir_dossier.image.moodle}, peut être n'importe quel
   schéma d'URL valide. Le plus souvent, ce sera soit une URL vers un
-  site externe qui contient les images soit, encore plus fréquent, une
+  site externe qui contient les images soit, encore plus fréquemment, une
   URL référençant l'image dans Moodle.
 
   La méthode la plus simple pour obtenir cette racine de l'URL est la
@@ -99,14 +107,23 @@ coder_image.moodle( nom.image,
 
   Il est aussi possible d'inclure l'image dans le fichier XML. Pour
   cela, précisez \code{interne = TRUE} lors de l'appel à
-  \code{lier_image.moodle}. Lors de la création de la question, les
+  \code{lier_image.moodle}.  Lors de la création de la question, les
   balises ainsi générées seront identifiées et les images encodées dans
   le fichier XML, avec la fonction \code{coder_image.moodle}. Attention
   cependant, les chemins d'accès locaux étant perdus, les fichiers
   contenant les images doivent se trouver dans le répertoire de travail
   au moment de la création de la question. Il est cependant possible
-  d'indiquer un dossier local d'images différent, avec
+  d'indiquer un ou plusieurs dossiers locaux d'images différents, avec
   \code{definir_dossier.image.moodle}, en précisant \code{local = TRUE}.
+  Si un fichier correspondant à l'image est trouvé dans plusieurs de ces
+  dossiers, seule le premier est utilisé avec un avertissement.  Les
+  dossiers sont cherchés dans l'ordre d'ajout à la liste des dossiers de
+  recherche, le dernier ajouté étant exploré en premier; un appel à
+  \code{definir_dossier.image.moodle} pour un dossier déjà dans la liste
+  le replace en haut de la liste.  La liste des dossiers peut être
+  remplacée par un seul dossier avec l'option \code{ajouter = FALSE} de
+  \code{definir_dossier.image.moodle}.
+  
 }
 \value{
   La fonction \code{lier_image.moodle} renvoie une chaîne de caractère
@@ -118,11 +135,11 @@ coder_image.moodle( nom.image,
   La fonction \code{coder_image.moodle} renvoie une chaîne de caractère
   qui contient le code XML permettant d'intégrer l'image dans le fichier
   XML, y compris son encodage en base 64. Cette chaîne peut ensuite être
-  utilisée dans la constitution des élements d'une
-  question moodle. Attention cependant, savoir où le mettre dans le
-  fichier XML n'est pas trivial: normalement, l'utilisation de cette
-  fonction ne devrait pas être nécessaire, si \code{lier_image.moodle} a
-  été utilisée correctement.
+  utilisée dans la constitution des élements d'une question moodle.
+  Attention cependant, savoir où le mettre dans le fichier XML n'est pas
+  trivial: normalement, l'utilisation de cette fonction ne devrait pas
+  être nécessaire, si \code{lier_image.moodle} a été utilisée
+  correctement.  
 }
 \author{
   Emmanuel Curis \email{emmanuel.curis@parisdescartes.fr}
@@ -130,9 +147,10 @@ coder_image.moodle( nom.image,
 
 \section{Attention}{Vous devez appeler au moins une fois la fonction
   \code{definir_dossier.image.moodle} pour pouvoir ensuite lier des
-  images externes au fichier XML. Au moment de la création du fichier
-  XML, il n'y a aucun moyen de vérifier que l'URL indiquée est
-  correcte...
+  images externes au fichier XML.
+
+  Au moment de la création du fichier XML, il n'y a aucun moyen de
+  vérifier que l'URL indiquée est correcte...
 }
 
 \section{Astuce}{Pour importer plusieurs images en une fois, vous avez

@@ -28,6 +28,8 @@
 ##
 ##   30 août    2022 : possibilité de ne pas afficher les instructions par défaut du QCM
 ##                       (balise <showstandardinstruction>)
+##
+##   18 mai     2023 : conversion stop → erreur et warning → avertissement
 ## ─────────────────────────────────────────────────────────────────
 
 ######################################################################
@@ -45,7 +47,8 @@ vrai_faux.moodle <- function( texte, texte.vrai = "Vrai", texte.faux = "Faux",
                               temps )
 {
     if( length( texte ) > 1 ) {
-        warning( "Texte de longeur > 1 - Concat\u00e9nation" )
+        avertissement( 340, "vrai_faux.moodle",
+                       "Texte de longueur > 1 - Concat\u00e9nation" )
         texte <- paste0( texte, collapse = "" )
     }
     
@@ -99,37 +102,43 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
                         commentaire.global = NA, penalite = NA, note.question = NA, idnum = NA,
                         temps, instructions = TRUE )
 {
-  ## On prépare les réponses
-  n.bonnes <- length( bonnes.reponses )
-  if ( n.bonnes < 1 ) {
-    ## Aucune bonne réponse ! On annule
-    stop( "Aucune bonne r\u00e9ponse indiqu\u00e9e..." )
-  }
+    ## On prépare les réponses
+    n.bonnes <- length( bonnes.reponses )
+    if ( n.bonnes < 1 ) {
+        ## Aucune bonne réponse ! On annule
+        erreur( 350, "qcm.moodle",
+                "Aucune bonne r\u00e9ponse indiqu\u00e9e..." )
+    }
 
-  ## Le pourcentage de points indiqués pour chaque bonne réponse
-  n.fractions <- length( fractions$Bonnes )
-  if ( 0 == n.fractions ) {
-    fractions$Bonnes <- rep( 100 / n.bonnes, n.bonnes )
-  } else if ( n.fractions > n.bonnes ) {
-    stop( "Plus de pourcentages de r\u00e9ponses que de bonnes r\u00e9ponses... " )
-  } else {
+    ## Le pourcentage de points indiqués pour chaque bonne réponse
+    n.fractions <- length( fractions$Bonnes )
+    if ( 0 == n.fractions ) {
+        fractions$Bonnes <- rep( 100 / n.bonnes, n.bonnes )
+    } else if ( n.fractions > n.bonnes ) {
+        erreur( 351, "qcm.moodle",
+                "Plus de pourcentages de r\u00e9ponses que de bonnes r\u00e9ponses..." )
+    } else {
+        somme <- sum( fractions$Bonnes )
+        fractions$Bonnes <- c( fractions$Bonnes,
+                               rep( ( 100 - somme ) / ( n.bonnes - n.fractions ),
+                                    n.bonnes - n.fractions ) )
+    }
     somme <- sum( fractions$Bonnes )
-    fractions$Bonnes <- c( fractions$Bonnes,
-                           rep( ( 100 - somme ) / ( n.bonnes - n.fractions ),
-                                n.bonnes - n.fractions ) )
-  }
-  somme <- sum( fractions$Bonnes )
-  if ( somme != 100 ) {
-    warning( "La somme des points attribu\u00e9s ne vaut pas 100 % !" )
-  }
-  if ( any( is.na( fractions$Bonnes ) ) ) {
-    warning( "Certaines bonnes r\u00e9ponses n'ont pas de note associ\u00e9e !",
-             "On leur met la note 0 faute de mieux..." )
-    fractions$Bonnes[ which( is.na( fractions$Bonnes ) ) ] <- 0
-  }
-  if ( any( fractions$Bonnes <= 0 ) ) {
-    warning( "Certaines bonnes r\u00e9ponses sont affect\u00e9es d'une fraction n\u00e9gative !" )
-  }
+    if ( somme != 100 ) {
+        avertissement( 350, "qcm.moodle",
+                       "La somme des points attribu\u00e9s ne vaut pas 100 % !" )
+    }
+    if ( any( is.na( fractions$Bonnes ) ) ) {
+        avertissement( 351, "qcm.moodle",
+                       "Certaines bonnes r\u00e9ponses n'ont pas de note associ\u00e9e !",
+                       "On leur met la note 0 faute de mieux..." )
+        fractions$Bonnes[ which( is.na( fractions$Bonnes ) ) ] <- 0
+    }
+    if ( any( fractions$Bonnes <= 0 ) ) {
+        avertissement( 352, "qcm.moodle",
+                       "Certaines bonnes r\u00e9ponses sont affect\u00e9es",
+                       " d'une fraction n\u00e9gative !" )
+    }
 
   ## Le pourcentage de points indiqué pour chaque mauvaise réponse
   n.mauvaises <- length( mauvaises.reponses )
@@ -142,7 +151,8 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
             fractions$Fausses <- - rep( 100 / n.mauvaises, n.mauvaises )
         }
     } else if ( n.fractions > n.mauvaises ) {
-      stop( "Plus de pourcentage de p\u00e9nalit\u00e9 que de mauvaise r\u00e9ponses... " )
+        erreur( 352, "qcm.moodle",
+                "Plus de pourcentage de p\u00e9nalit\u00e9 que de mauvaise r\u00e9ponses..." )
     } else {
         if ( any( is.na( fractions$Fausses ) ) ) {
             fractions$Fausses[ which( is.na( fractions$Fausses ) ) ] <- 0
@@ -156,16 +166,19 @@ qcm.moodle <- function( texte, bonnes.reponses, mauvaises.reponses,
                                      n.mauvaises - n.fractions ) )
     }
     if ( any( is.na( fractions$Fausses ) ) ) {
-        warning( "Certaines faussees r\u00e9ponses n'ont pas de fraction associ\u00e9e [NA].",
-                 " On leur attribue la note 0." )
+        avertissement( 353, "qcm.moodle",
+                       "Certaines fausses r\u00e9ponses n'ont pas de fraction associ\u00e9e [NA].",
+                       " On leur attribue la note 0." )
         fractions$Fausses[ which( is.na( fractions$Fausses ) ) ] <- 0
     }
     if ( any( fractions$Fausses > 0 ) ) {
-        warning( "Certaines faussees r\u00e9ponses sont affect\u00e9es d'une fraction positive !" )
+        avertissement( 354, "qcm.moodle",
+                       "Certaines fausses r\u00e9ponses sont affect\u00e9es d'une fraction positive !" )
     }
   } else {
-    warning( "Attention, il n'y a aucune mauvaise r\u00e9ponse dans ce Q. C. M. !" )
-    fractions$Fausses <- NULL
+      avertissement( 355, "qcm.moodle",
+                     "Il n'y a aucune mauvaise r\u00e9ponse dans ce Q. C. M. !" )
+      fractions$Fausses <- NULL
   }
 
   ## On assemble le tout
